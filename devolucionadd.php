@@ -427,6 +427,8 @@ class cdevolucion_add extends cdevolucion {
 		$this->fecha->OldValue = $this->fecha->CurrentValue;
 		$this->cliente->CurrentValue = NULL;
 		$this->cliente->OldValue = $this->cliente->CurrentValue;
+		$this->libro->CurrentValue = NULL;
+		$this->libro->OldValue = $this->libro->CurrentValue;
 	}
 
 	// Load form values
@@ -443,6 +445,9 @@ class cdevolucion_add extends cdevolucion {
 		if (!$this->cliente->FldIsDetailKey) {
 			$this->cliente->setFormValue($objForm->GetValue("x_cliente"));
 		}
+		if (!$this->libro->FldIsDetailKey) {
+			$this->libro->setFormValue($objForm->GetValue("x_libro"));
+		}
 	}
 
 	// Restore form values
@@ -452,6 +457,7 @@ class cdevolucion_add extends cdevolucion {
 		$this->empleado->CurrentValue = $this->empleado->FormValue;
 		$this->fecha->CurrentValue = $this->fecha->FormValue;
 		$this->cliente->CurrentValue = $this->cliente->FormValue;
+		$this->libro->CurrentValue = $this->libro->FormValue;
 	}
 
 	// Load row based on key values
@@ -487,6 +493,7 @@ class cdevolucion_add extends cdevolucion {
 		$this->empleado->setDbValue($rs->fields('empleado'));
 		$this->fecha->setDbValue($rs->fields('fecha'));
 		$this->cliente->setDbValue($rs->fields('cliente'));
+		$this->libro->setDbValue($rs->fields('libro'));
 	}
 
 	// Load DbValue from recordset
@@ -497,6 +504,7 @@ class cdevolucion_add extends cdevolucion {
 		$this->empleado->DbValue = $row['empleado'];
 		$this->fecha->DbValue = $row['fecha'];
 		$this->cliente->DbValue = $row['cliente'];
+		$this->libro->DbValue = $row['libro'];
 	}
 
 	// Load old record
@@ -536,6 +544,7 @@ class cdevolucion_add extends cdevolucion {
 		// empleado
 		// fecha
 		// cliente
+		// libro
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -555,6 +564,10 @@ class cdevolucion_add extends cdevolucion {
 		$this->cliente->ViewValue = $this->cliente->CurrentValue;
 		$this->cliente->ViewCustomAttributes = "";
 
+		// libro
+		$this->libro->ViewValue = $this->libro->CurrentValue;
+		$this->libro->ViewCustomAttributes = "";
+
 			// empleado
 			$this->empleado->LinkCustomAttributes = "";
 			$this->empleado->HrefValue = "";
@@ -569,6 +582,11 @@ class cdevolucion_add extends cdevolucion {
 			$this->cliente->LinkCustomAttributes = "";
 			$this->cliente->HrefValue = "";
 			$this->cliente->TooltipValue = "";
+
+			// libro
+			$this->libro->LinkCustomAttributes = "";
+			$this->libro->HrefValue = "";
+			$this->libro->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// empleado
@@ -589,6 +607,12 @@ class cdevolucion_add extends cdevolucion {
 			$this->cliente->EditValue = ew_HtmlEncode($this->cliente->CurrentValue);
 			$this->cliente->PlaceHolder = ew_RemoveHtml($this->cliente->FldCaption());
 
+			// libro
+			$this->libro->EditAttrs["class"] = "form-control";
+			$this->libro->EditCustomAttributes = "";
+			$this->libro->EditValue = ew_HtmlEncode($this->libro->CurrentValue);
+			$this->libro->PlaceHolder = ew_RemoveHtml($this->libro->FldCaption());
+
 			// Add refer script
 			// empleado
 
@@ -602,6 +626,10 @@ class cdevolucion_add extends cdevolucion {
 			// cliente
 			$this->cliente->LinkCustomAttributes = "";
 			$this->cliente->HrefValue = "";
+
+			// libro
+			$this->libro->LinkCustomAttributes = "";
+			$this->libro->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -636,6 +664,9 @@ class cdevolucion_add extends cdevolucion {
 		if (!$this->cliente->FldIsDetailKey && !is_null($this->cliente->FormValue) && $this->cliente->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->cliente->FldCaption(), $this->cliente->ReqErrMsg));
 		}
+		if (!$this->libro->FldIsDetailKey && !is_null($this->libro->FormValue) && $this->libro->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->libro->FldCaption(), $this->libro->ReqErrMsg));
+		}
 
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
@@ -668,6 +699,9 @@ class cdevolucion_add extends cdevolucion {
 
 		// cliente
 		$this->cliente->SetDbValueDef($rsnew, $this->cliente->CurrentValue, "", FALSE);
+
+		// libro
+		$this->libro->SetDbValueDef($rsnew, $this->libro->CurrentValue, "", FALSE);
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -833,6 +867,9 @@ fdevolucionadd.Validate = function() {
 			elm = this.GetElements("x" + infix + "_cliente");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $devolucion->cliente->FldCaption(), $devolucion->cliente->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_libro");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $devolucion->libro->FldCaption(), $devolucion->libro->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -917,6 +954,16 @@ $devolucion_add->ShowMessage();
 <input type="text" data-table="devolucion" data-field="x_cliente" name="x_cliente" id="x_cliente" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($devolucion->cliente->getPlaceHolder()) ?>" value="<?php echo $devolucion->cliente->EditValue ?>"<?php echo $devolucion->cliente->EditAttributes() ?>>
 </span>
 <?php echo $devolucion->cliente->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($devolucion->libro->Visible) { // libro ?>
+	<div id="r_libro" class="form-group">
+		<label id="elh_devolucion_libro" for="x_libro" class="col-sm-2 control-label ewLabel"><?php echo $devolucion->libro->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $devolucion->libro->CellAttributes() ?>>
+<span id="el_devolucion_libro">
+<input type="text" data-table="devolucion" data-field="x_libro" name="x_libro" id="x_libro" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($devolucion->libro->getPlaceHolder()) ?>" value="<?php echo $devolucion->libro->EditValue ?>"<?php echo $devolucion->libro->EditAttributes() ?>>
+</span>
+<?php echo $devolucion->libro->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

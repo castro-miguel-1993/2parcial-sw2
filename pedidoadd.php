@@ -427,6 +427,10 @@ class cpedido_add extends cpedido {
 		$this->fecha->OldValue = $this->fecha->CurrentValue;
 		$this->cliente->CurrentValue = NULL;
 		$this->cliente->OldValue = $this->cliente->CurrentValue;
+		$this->libro->CurrentValue = NULL;
+		$this->libro->OldValue = $this->libro->CurrentValue;
+		$this->cantidad->CurrentValue = NULL;
+		$this->cantidad->OldValue = $this->cantidad->CurrentValue;
 	}
 
 	// Load form values
@@ -444,6 +448,12 @@ class cpedido_add extends cpedido {
 		if (!$this->cliente->FldIsDetailKey) {
 			$this->cliente->setFormValue($objForm->GetValue("x_cliente"));
 		}
+		if (!$this->libro->FldIsDetailKey) {
+			$this->libro->setFormValue($objForm->GetValue("x_libro"));
+		}
+		if (!$this->cantidad->FldIsDetailKey) {
+			$this->cantidad->setFormValue($objForm->GetValue("x_cantidad"));
+		}
 	}
 
 	// Restore form values
@@ -454,6 +464,8 @@ class cpedido_add extends cpedido {
 		$this->fecha->CurrentValue = $this->fecha->FormValue;
 		$this->fecha->CurrentValue = ew_UnFormatDateTime($this->fecha->CurrentValue, 7);
 		$this->cliente->CurrentValue = $this->cliente->FormValue;
+		$this->libro->CurrentValue = $this->libro->FormValue;
+		$this->cantidad->CurrentValue = $this->cantidad->FormValue;
 	}
 
 	// Load row based on key values
@@ -489,6 +501,8 @@ class cpedido_add extends cpedido {
 		$this->empleado->setDbValue($rs->fields('empleado'));
 		$this->fecha->setDbValue($rs->fields('fecha'));
 		$this->cliente->setDbValue($rs->fields('cliente'));
+		$this->libro->setDbValue($rs->fields('libro'));
+		$this->cantidad->setDbValue($rs->fields('cantidad'));
 	}
 
 	// Load DbValue from recordset
@@ -499,6 +513,8 @@ class cpedido_add extends cpedido {
 		$this->empleado->DbValue = $row['empleado'];
 		$this->fecha->DbValue = $row['fecha'];
 		$this->cliente->DbValue = $row['cliente'];
+		$this->libro->DbValue = $row['libro'];
+		$this->cantidad->DbValue = $row['cantidad'];
 	}
 
 	// Load old record
@@ -538,6 +554,8 @@ class cpedido_add extends cpedido {
 		// empleado
 		// fecha
 		// cliente
+		// libro
+		// cantidad
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -558,6 +576,14 @@ class cpedido_add extends cpedido {
 		$this->cliente->ViewValue = $this->cliente->CurrentValue;
 		$this->cliente->ViewCustomAttributes = "";
 
+		// libro
+		$this->libro->ViewValue = $this->libro->CurrentValue;
+		$this->libro->ViewCustomAttributes = "";
+
+		// cantidad
+		$this->cantidad->ViewValue = $this->cantidad->CurrentValue;
+		$this->cantidad->ViewCustomAttributes = "";
+
 			// empleado
 			$this->empleado->LinkCustomAttributes = "";
 			$this->empleado->HrefValue = "";
@@ -572,6 +598,16 @@ class cpedido_add extends cpedido {
 			$this->cliente->LinkCustomAttributes = "";
 			$this->cliente->HrefValue = "";
 			$this->cliente->TooltipValue = "";
+
+			// libro
+			$this->libro->LinkCustomAttributes = "";
+			$this->libro->HrefValue = "";
+			$this->libro->TooltipValue = "";
+
+			// cantidad
+			$this->cantidad->LinkCustomAttributes = "";
+			$this->cantidad->HrefValue = "";
+			$this->cantidad->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// empleado
@@ -592,6 +628,18 @@ class cpedido_add extends cpedido {
 			$this->cliente->EditValue = ew_HtmlEncode($this->cliente->CurrentValue);
 			$this->cliente->PlaceHolder = ew_RemoveHtml($this->cliente->FldCaption());
 
+			// libro
+			$this->libro->EditAttrs["class"] = "form-control";
+			$this->libro->EditCustomAttributes = "";
+			$this->libro->EditValue = ew_HtmlEncode($this->libro->CurrentValue);
+			$this->libro->PlaceHolder = ew_RemoveHtml($this->libro->FldCaption());
+
+			// cantidad
+			$this->cantidad->EditAttrs["class"] = "form-control";
+			$this->cantidad->EditCustomAttributes = "";
+			$this->cantidad->EditValue = ew_HtmlEncode($this->cantidad->CurrentValue);
+			$this->cantidad->PlaceHolder = ew_RemoveHtml($this->cantidad->FldCaption());
+
 			// Add refer script
 			// empleado
 
@@ -605,6 +653,14 @@ class cpedido_add extends cpedido {
 			// cliente
 			$this->cliente->LinkCustomAttributes = "";
 			$this->cliente->HrefValue = "";
+
+			// libro
+			$this->libro->LinkCustomAttributes = "";
+			$this->libro->HrefValue = "";
+
+			// cantidad
+			$this->cantidad->LinkCustomAttributes = "";
+			$this->cantidad->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -639,6 +695,15 @@ class cpedido_add extends cpedido {
 		if (!$this->cliente->FldIsDetailKey && !is_null($this->cliente->FormValue) && $this->cliente->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->cliente->FldCaption(), $this->cliente->ReqErrMsg));
 		}
+		if (!$this->libro->FldIsDetailKey && !is_null($this->libro->FormValue) && $this->libro->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->libro->FldCaption(), $this->libro->ReqErrMsg));
+		}
+		if (!$this->cantidad->FldIsDetailKey && !is_null($this->cantidad->FormValue) && $this->cantidad->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->cantidad->FldCaption(), $this->cantidad->ReqErrMsg));
+		}
+		if (!ew_CheckInteger($this->cantidad->FormValue)) {
+			ew_AddMessage($gsFormError, $this->cantidad->FldErrMsg());
+		}
 
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
@@ -671,6 +736,12 @@ class cpedido_add extends cpedido {
 
 		// cliente
 		$this->cliente->SetDbValueDef($rsnew, $this->cliente->CurrentValue, "", FALSE);
+
+		// libro
+		$this->libro->SetDbValueDef($rsnew, $this->libro->CurrentValue, "", FALSE);
+
+		// cantidad
+		$this->cantidad->SetDbValueDef($rsnew, $this->cantidad->CurrentValue, 0, FALSE);
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -836,6 +907,15 @@ fpedidoadd.Validate = function() {
 			elm = this.GetElements("x" + infix + "_cliente");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $pedido->cliente->FldCaption(), $pedido->cliente->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_libro");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $pedido->libro->FldCaption(), $pedido->libro->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_cantidad");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $pedido->cantidad->FldCaption(), $pedido->cantidad->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_cantidad");
+			if (elm && !ew_CheckInteger(elm.value))
+				return this.OnError(elm, "<?php echo ew_JsEncode2($pedido->cantidad->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -920,6 +1000,26 @@ $pedido_add->ShowMessage();
 <input type="text" data-table="pedido" data-field="x_cliente" name="x_cliente" id="x_cliente" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($pedido->cliente->getPlaceHolder()) ?>" value="<?php echo $pedido->cliente->EditValue ?>"<?php echo $pedido->cliente->EditAttributes() ?>>
 </span>
 <?php echo $pedido->cliente->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($pedido->libro->Visible) { // libro ?>
+	<div id="r_libro" class="form-group">
+		<label id="elh_pedido_libro" for="x_libro" class="col-sm-2 control-label ewLabel"><?php echo $pedido->libro->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $pedido->libro->CellAttributes() ?>>
+<span id="el_pedido_libro">
+<input type="text" data-table="pedido" data-field="x_libro" name="x_libro" id="x_libro" size="30" maxlength="100" placeholder="<?php echo ew_HtmlEncode($pedido->libro->getPlaceHolder()) ?>" value="<?php echo $pedido->libro->EditValue ?>"<?php echo $pedido->libro->EditAttributes() ?>>
+</span>
+<?php echo $pedido->libro->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($pedido->cantidad->Visible) { // cantidad ?>
+	<div id="r_cantidad" class="form-group">
+		<label id="elh_pedido_cantidad" for="x_cantidad" class="col-sm-2 control-label ewLabel"><?php echo $pedido->cantidad->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $pedido->cantidad->CellAttributes() ?>>
+<span id="el_pedido_cantidad">
+<input type="text" data-table="pedido" data-field="x_cantidad" name="x_cantidad" id="x_cantidad" size="30" placeholder="<?php echo ew_HtmlEncode($pedido->cantidad->getPlaceHolder()) ?>" value="<?php echo $pedido->cantidad->EditValue ?>"<?php echo $pedido->cantidad->EditAttributes() ?>>
+</span>
+<?php echo $pedido->cantidad->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

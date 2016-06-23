@@ -680,6 +680,8 @@ class cpedido_list extends cpedido {
 		$sFilterList = ew_Concat($sFilterList, $this->empleado->AdvancedSearch->ToJSON(), ","); // Field empleado
 		$sFilterList = ew_Concat($sFilterList, $this->fecha->AdvancedSearch->ToJSON(), ","); // Field fecha
 		$sFilterList = ew_Concat($sFilterList, $this->cliente->AdvancedSearch->ToJSON(), ","); // Field cliente
+		$sFilterList = ew_Concat($sFilterList, $this->libro->AdvancedSearch->ToJSON(), ","); // Field libro
+		$sFilterList = ew_Concat($sFilterList, $this->cantidad->AdvancedSearch->ToJSON(), ","); // Field cantidad
 		if ($this->BasicSearch->Keyword <> "") {
 			$sWrk = "\"" . EW_TABLE_BASIC_SEARCH . "\":\"" . ew_JsEncode2($this->BasicSearch->Keyword) . "\",\"" . EW_TABLE_BASIC_SEARCH_TYPE . "\":\"" . ew_JsEncode2($this->BasicSearch->Type) . "\"";
 			$sFilterList = ew_Concat($sFilterList, $sWrk, ",");
@@ -729,6 +731,22 @@ class cpedido_list extends cpedido {
 		$this->cliente->AdvancedSearch->SearchValue2 = @$filter["y_cliente"];
 		$this->cliente->AdvancedSearch->SearchOperator2 = @$filter["w_cliente"];
 		$this->cliente->AdvancedSearch->Save();
+
+		// Field libro
+		$this->libro->AdvancedSearch->SearchValue = @$filter["x_libro"];
+		$this->libro->AdvancedSearch->SearchOperator = @$filter["z_libro"];
+		$this->libro->AdvancedSearch->SearchCondition = @$filter["v_libro"];
+		$this->libro->AdvancedSearch->SearchValue2 = @$filter["y_libro"];
+		$this->libro->AdvancedSearch->SearchOperator2 = @$filter["w_libro"];
+		$this->libro->AdvancedSearch->Save();
+
+		// Field cantidad
+		$this->cantidad->AdvancedSearch->SearchValue = @$filter["x_cantidad"];
+		$this->cantidad->AdvancedSearch->SearchOperator = @$filter["z_cantidad"];
+		$this->cantidad->AdvancedSearch->SearchCondition = @$filter["v_cantidad"];
+		$this->cantidad->AdvancedSearch->SearchValue2 = @$filter["y_cantidad"];
+		$this->cantidad->AdvancedSearch->SearchOperator2 = @$filter["w_cantidad"];
+		$this->cantidad->AdvancedSearch->Save();
 		$this->BasicSearch->setKeyword(@$filter[EW_TABLE_BASIC_SEARCH]);
 		$this->BasicSearch->setType(@$filter[EW_TABLE_BASIC_SEARCH_TYPE]);
 	}
@@ -738,6 +756,7 @@ class cpedido_list extends cpedido {
 		$sWhere = "";
 		$this->BuildBasicSearchSQL($sWhere, $this->empleado, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->cliente, $arKeywords, $type);
+		$this->BuildBasicSearchSQL($sWhere, $this->libro, $arKeywords, $type);
 		return $sWhere;
 	}
 
@@ -908,6 +927,8 @@ class cpedido_list extends cpedido {
 			$this->UpdateSort($this->empleado, $bCtrl); // empleado
 			$this->UpdateSort($this->fecha, $bCtrl); // fecha
 			$this->UpdateSort($this->cliente, $bCtrl); // cliente
+			$this->UpdateSort($this->libro, $bCtrl); // libro
+			$this->UpdateSort($this->cantidad, $bCtrl); // cantidad
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -944,6 +965,8 @@ class cpedido_list extends cpedido {
 				$this->empleado->setSort("");
 				$this->fecha->setSort("");
 				$this->cliente->setSort("");
+				$this->libro->setSort("");
+				$this->cantidad->setSort("");
 			}
 
 			// Reset start position
@@ -1417,6 +1440,8 @@ class cpedido_list extends cpedido {
 		$this->empleado->setDbValue($rs->fields('empleado'));
 		$this->fecha->setDbValue($rs->fields('fecha'));
 		$this->cliente->setDbValue($rs->fields('cliente'));
+		$this->libro->setDbValue($rs->fields('libro'));
+		$this->cantidad->setDbValue($rs->fields('cantidad'));
 	}
 
 	// Load DbValue from recordset
@@ -1427,6 +1452,8 @@ class cpedido_list extends cpedido {
 		$this->empleado->DbValue = $row['empleado'];
 		$this->fecha->DbValue = $row['fecha'];
 		$this->cliente->DbValue = $row['cliente'];
+		$this->libro->DbValue = $row['libro'];
+		$this->cantidad->DbValue = $row['cantidad'];
 	}
 
 	// Load old record
@@ -1472,6 +1499,8 @@ class cpedido_list extends cpedido {
 		// empleado
 		// fecha
 		// cliente
+		// libro
+		// cantidad
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1492,6 +1521,14 @@ class cpedido_list extends cpedido {
 		$this->cliente->ViewValue = $this->cliente->CurrentValue;
 		$this->cliente->ViewCustomAttributes = "";
 
+		// libro
+		$this->libro->ViewValue = $this->libro->CurrentValue;
+		$this->libro->ViewCustomAttributes = "";
+
+		// cantidad
+		$this->cantidad->ViewValue = $this->cantidad->CurrentValue;
+		$this->cantidad->ViewCustomAttributes = "";
+
 			// id
 			$this->id->LinkCustomAttributes = "";
 			$this->id->HrefValue = "";
@@ -1511,6 +1548,16 @@ class cpedido_list extends cpedido {
 			$this->cliente->LinkCustomAttributes = "";
 			$this->cliente->HrefValue = "";
 			$this->cliente->TooltipValue = "";
+
+			// libro
+			$this->libro->LinkCustomAttributes = "";
+			$this->libro->HrefValue = "";
+			$this->libro->TooltipValue = "";
+
+			// cantidad
+			$this->cantidad->LinkCustomAttributes = "";
+			$this->cantidad->HrefValue = "";
+			$this->cantidad->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1948,6 +1995,68 @@ while ($pedido_list->RecCnt < $pedido_list->StopRec) {
 <span id="el<?php echo $pedido_list->RowCnt ?>_pedido_cliente">
 <span<?php echo $pedido->cliente->ViewAttributes() ?>>
 <?php echo $pedido->cliente->ListViewValue() ?></span>
+</span>
+</div></div>
+		</div>
+		<?php } ?>
+	<?php } ?>
+	<?php if ($pedido->libro->Visible) { // libro ?>
+		<?php if ($pedido->RowType == EW_ROWTYPE_VIEW) { // View record ?>
+		<tr>
+			<td class="ewTableHeader"><span class="pedido_libro">
+<?php if ($pedido->Export <> "" || $pedido->SortUrl($pedido->libro) == "") { ?>
+				<div class="ewTableHeaderCaption"><?php echo $pedido->libro->FldCaption() ?></div>
+<?php } else { ?>
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $pedido->SortUrl($pedido->libro) ?>',2);">
+            	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $pedido->libro->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($pedido->libro->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($pedido->libro->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+				</div>
+<?php } ?>
+			</span></td>
+			<td<?php echo $pedido->libro->CellAttributes() ?>>
+<span id="el<?php echo $pedido_list->RowCnt ?>_pedido_libro">
+<span<?php echo $pedido->libro->ViewAttributes() ?>>
+<?php echo $pedido->libro->ListViewValue() ?></span>
+</span>
+</td>
+		</tr>
+		<?php } else { // Add/edit record ?>
+		<div class="form-group pedido_libro">
+			<label class="col-sm-2 control-label ewLabel"><?php echo $pedido->libro->FldCaption() ?></label>
+			<div class="col-sm-10"><div<?php echo $pedido->libro->CellAttributes() ?>>
+<span id="el<?php echo $pedido_list->RowCnt ?>_pedido_libro">
+<span<?php echo $pedido->libro->ViewAttributes() ?>>
+<?php echo $pedido->libro->ListViewValue() ?></span>
+</span>
+</div></div>
+		</div>
+		<?php } ?>
+	<?php } ?>
+	<?php if ($pedido->cantidad->Visible) { // cantidad ?>
+		<?php if ($pedido->RowType == EW_ROWTYPE_VIEW) { // View record ?>
+		<tr>
+			<td class="ewTableHeader"><span class="pedido_cantidad">
+<?php if ($pedido->Export <> "" || $pedido->SortUrl($pedido->cantidad) == "") { ?>
+				<div class="ewTableHeaderCaption"><?php echo $pedido->cantidad->FldCaption() ?></div>
+<?php } else { ?>
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $pedido->SortUrl($pedido->cantidad) ?>',2);">
+            	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $pedido->cantidad->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($pedido->cantidad->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($pedido->cantidad->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+				</div>
+<?php } ?>
+			</span></td>
+			<td<?php echo $pedido->cantidad->CellAttributes() ?>>
+<span id="el<?php echo $pedido_list->RowCnt ?>_pedido_cantidad">
+<span<?php echo $pedido->cantidad->ViewAttributes() ?>>
+<?php echo $pedido->cantidad->ListViewValue() ?></span>
+</span>
+</td>
+		</tr>
+		<?php } else { // Add/edit record ?>
+		<div class="form-group pedido_cantidad">
+			<label class="col-sm-2 control-label ewLabel"><?php echo $pedido->cantidad->FldCaption() ?></label>
+			<div class="col-sm-10"><div<?php echo $pedido->cantidad->CellAttributes() ?>>
+<span id="el<?php echo $pedido_list->RowCnt ?>_pedido_cantidad">
+<span<?php echo $pedido->cantidad->ViewAttributes() ?>>
+<?php echo $pedido->cantidad->ListViewValue() ?></span>
 </span>
 </div></div>
 		</div>

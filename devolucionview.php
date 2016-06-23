@@ -528,6 +528,7 @@ class cdevolucion_view extends cdevolucion {
 		$this->empleado->setDbValue($rs->fields('empleado'));
 		$this->fecha->setDbValue($rs->fields('fecha'));
 		$this->cliente->setDbValue($rs->fields('cliente'));
+		$this->libro->setDbValue($rs->fields('libro'));
 	}
 
 	// Load DbValue from recordset
@@ -538,6 +539,7 @@ class cdevolucion_view extends cdevolucion {
 		$this->empleado->DbValue = $row['empleado'];
 		$this->fecha->DbValue = $row['fecha'];
 		$this->cliente->DbValue = $row['cliente'];
+		$this->libro->DbValue = $row['libro'];
 	}
 
 	// Render row values based on field settings
@@ -560,6 +562,7 @@ class cdevolucion_view extends cdevolucion {
 		// empleado
 		// fecha
 		// cliente
+		// libro
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -578,6 +581,10 @@ class cdevolucion_view extends cdevolucion {
 		// cliente
 		$this->cliente->ViewValue = $this->cliente->CurrentValue;
 		$this->cliente->ViewCustomAttributes = "";
+
+		// libro
+		$this->libro->ViewValue = $this->libro->CurrentValue;
+		$this->libro->ViewCustomAttributes = "";
 
 			// id
 			$this->id->LinkCustomAttributes = "";
@@ -598,6 +605,11 @@ class cdevolucion_view extends cdevolucion {
 			$this->cliente->LinkCustomAttributes = "";
 			$this->cliente->HrefValue = "";
 			$this->cliente->TooltipValue = "";
+
+			// libro
+			$this->libro->LinkCustomAttributes = "";
+			$this->libro->HrefValue = "";
+			$this->libro->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -810,6 +822,17 @@ $devolucion_view->ShowMessage();
 <span id="el_devolucion_cliente">
 <span<?php echo $devolucion->cliente->ViewAttributes() ?>>
 <?php echo $devolucion->cliente->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($devolucion->libro->Visible) { // libro ?>
+	<tr id="r_libro">
+		<td><span id="elh_devolucion_libro"><?php echo $devolucion->libro->FldCaption() ?></span></td>
+		<td data-name="libro"<?php echo $devolucion->libro->CellAttributes() ?>>
+<span id="el_devolucion_libro">
+<span<?php echo $devolucion->libro->ViewAttributes() ?>>
+<?php echo $devolucion->libro->ViewValue ?></span>
 </span>
 </td>
 	</tr>

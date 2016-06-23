@@ -11,6 +11,7 @@ class cdevolucion extends cTable {
 	var $empleado;
 	var $fecha;
 	var $cliente;
+	var $libro;
 
 	//
 	// Table class constructor
@@ -59,6 +60,10 @@ class cdevolucion extends cTable {
 		// cliente
 		$this->cliente = new cField('devolucion', 'devolucion', 'x_cliente', 'cliente', '`cliente`', '`cliente`', 200, -1, FALSE, '`cliente`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->fields['cliente'] = &$this->cliente;
+
+		// libro
+		$this->libro = new cField('devolucion', 'devolucion', 'x_libro', 'libro', '`libro`', '`libro`', 200, -1, FALSE, '`libro`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->fields['libro'] = &$this->libro;
 	}
 
 	// Multiple column sort
@@ -550,6 +555,7 @@ class cdevolucion extends cTable {
 		$this->empleado->setDbValue($rs->fields('empleado'));
 		$this->fecha->setDbValue($rs->fields('fecha'));
 		$this->cliente->setDbValue($rs->fields('cliente'));
+		$this->libro->setDbValue($rs->fields('libro'));
 	}
 
 	// Render list row values
@@ -564,6 +570,7 @@ class cdevolucion extends cTable {
 		// empleado
 		// fecha
 		// cliente
+		// libro
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -580,6 +587,10 @@ class cdevolucion extends cTable {
 		// cliente
 		$this->cliente->ViewValue = $this->cliente->CurrentValue;
 		$this->cliente->ViewCustomAttributes = "";
+
+		// libro
+		$this->libro->ViewValue = $this->libro->CurrentValue;
+		$this->libro->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -600,6 +611,11 @@ class cdevolucion extends cTable {
 		$this->cliente->LinkCustomAttributes = "";
 		$this->cliente->HrefValue = "";
 		$this->cliente->TooltipValue = "";
+
+		// libro
+		$this->libro->LinkCustomAttributes = "";
+		$this->libro->HrefValue = "";
+		$this->libro->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -636,6 +652,12 @@ class cdevolucion extends cTable {
 		$this->cliente->EditValue = $this->cliente->CurrentValue;
 		$this->cliente->PlaceHolder = ew_RemoveHtml($this->cliente->FldCaption());
 
+		// libro
+		$this->libro->EditAttrs["class"] = "form-control";
+		$this->libro->EditCustomAttributes = "";
+		$this->libro->EditValue = $this->libro->CurrentValue;
+		$this->libro->PlaceHolder = ew_RemoveHtml($this->libro->FldCaption());
+
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -667,11 +689,13 @@ class cdevolucion extends cTable {
 					if ($this->empleado->Exportable) $Doc->ExportCaption($this->empleado);
 					if ($this->fecha->Exportable) $Doc->ExportCaption($this->fecha);
 					if ($this->cliente->Exportable) $Doc->ExportCaption($this->cliente);
+					if ($this->libro->Exportable) $Doc->ExportCaption($this->libro);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->empleado->Exportable) $Doc->ExportCaption($this->empleado);
 					if ($this->fecha->Exportable) $Doc->ExportCaption($this->fecha);
 					if ($this->cliente->Exportable) $Doc->ExportCaption($this->cliente);
+					if ($this->libro->Exportable) $Doc->ExportCaption($this->libro);
 				}
 				$Doc->EndExportRow();
 			}
@@ -707,11 +731,13 @@ class cdevolucion extends cTable {
 						if ($this->empleado->Exportable) $Doc->ExportField($this->empleado);
 						if ($this->fecha->Exportable) $Doc->ExportField($this->fecha);
 						if ($this->cliente->Exportable) $Doc->ExportField($this->cliente);
+						if ($this->libro->Exportable) $Doc->ExportField($this->libro);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->empleado->Exportable) $Doc->ExportField($this->empleado);
 						if ($this->fecha->Exportable) $Doc->ExportField($this->fecha);
 						if ($this->cliente->Exportable) $Doc->ExportField($this->cliente);
+						if ($this->libro->Exportable) $Doc->ExportField($this->libro);
 					}
 					$Doc->EndExportRow();
 				}

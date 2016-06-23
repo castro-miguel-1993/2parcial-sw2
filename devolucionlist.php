@@ -680,6 +680,7 @@ class cdevolucion_list extends cdevolucion {
 		$sFilterList = ew_Concat($sFilterList, $this->empleado->AdvancedSearch->ToJSON(), ","); // Field empleado
 		$sFilterList = ew_Concat($sFilterList, $this->fecha->AdvancedSearch->ToJSON(), ","); // Field fecha
 		$sFilterList = ew_Concat($sFilterList, $this->cliente->AdvancedSearch->ToJSON(), ","); // Field cliente
+		$sFilterList = ew_Concat($sFilterList, $this->libro->AdvancedSearch->ToJSON(), ","); // Field libro
 		if ($this->BasicSearch->Keyword <> "") {
 			$sWrk = "\"" . EW_TABLE_BASIC_SEARCH . "\":\"" . ew_JsEncode2($this->BasicSearch->Keyword) . "\",\"" . EW_TABLE_BASIC_SEARCH_TYPE . "\":\"" . ew_JsEncode2($this->BasicSearch->Type) . "\"";
 			$sFilterList = ew_Concat($sFilterList, $sWrk, ",");
@@ -729,6 +730,14 @@ class cdevolucion_list extends cdevolucion {
 		$this->cliente->AdvancedSearch->SearchValue2 = @$filter["y_cliente"];
 		$this->cliente->AdvancedSearch->SearchOperator2 = @$filter["w_cliente"];
 		$this->cliente->AdvancedSearch->Save();
+
+		// Field libro
+		$this->libro->AdvancedSearch->SearchValue = @$filter["x_libro"];
+		$this->libro->AdvancedSearch->SearchOperator = @$filter["z_libro"];
+		$this->libro->AdvancedSearch->SearchCondition = @$filter["v_libro"];
+		$this->libro->AdvancedSearch->SearchValue2 = @$filter["y_libro"];
+		$this->libro->AdvancedSearch->SearchOperator2 = @$filter["w_libro"];
+		$this->libro->AdvancedSearch->Save();
 		$this->BasicSearch->setKeyword(@$filter[EW_TABLE_BASIC_SEARCH]);
 		$this->BasicSearch->setType(@$filter[EW_TABLE_BASIC_SEARCH_TYPE]);
 	}
@@ -738,6 +747,7 @@ class cdevolucion_list extends cdevolucion {
 		$sWhere = "";
 		$this->BuildBasicSearchSQL($sWhere, $this->empleado, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->cliente, $arKeywords, $type);
+		$this->BuildBasicSearchSQL($sWhere, $this->libro, $arKeywords, $type);
 		return $sWhere;
 	}
 
@@ -908,6 +918,7 @@ class cdevolucion_list extends cdevolucion {
 			$this->UpdateSort($this->empleado, $bCtrl); // empleado
 			$this->UpdateSort($this->fecha, $bCtrl); // fecha
 			$this->UpdateSort($this->cliente, $bCtrl); // cliente
+			$this->UpdateSort($this->libro, $bCtrl); // libro
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -944,6 +955,7 @@ class cdevolucion_list extends cdevolucion {
 				$this->empleado->setSort("");
 				$this->fecha->setSort("");
 				$this->cliente->setSort("");
+				$this->libro->setSort("");
 			}
 
 			// Reset start position
@@ -1417,6 +1429,7 @@ class cdevolucion_list extends cdevolucion {
 		$this->empleado->setDbValue($rs->fields('empleado'));
 		$this->fecha->setDbValue($rs->fields('fecha'));
 		$this->cliente->setDbValue($rs->fields('cliente'));
+		$this->libro->setDbValue($rs->fields('libro'));
 	}
 
 	// Load DbValue from recordset
@@ -1427,6 +1440,7 @@ class cdevolucion_list extends cdevolucion {
 		$this->empleado->DbValue = $row['empleado'];
 		$this->fecha->DbValue = $row['fecha'];
 		$this->cliente->DbValue = $row['cliente'];
+		$this->libro->DbValue = $row['libro'];
 	}
 
 	// Load old record
@@ -1472,6 +1486,7 @@ class cdevolucion_list extends cdevolucion {
 		// empleado
 		// fecha
 		// cliente
+		// libro
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1490,6 +1505,10 @@ class cdevolucion_list extends cdevolucion {
 		// cliente
 		$this->cliente->ViewValue = $this->cliente->CurrentValue;
 		$this->cliente->ViewCustomAttributes = "";
+
+		// libro
+		$this->libro->ViewValue = $this->libro->CurrentValue;
+		$this->libro->ViewCustomAttributes = "";
 
 			// id
 			$this->id->LinkCustomAttributes = "";
@@ -1510,6 +1529,11 @@ class cdevolucion_list extends cdevolucion {
 			$this->cliente->LinkCustomAttributes = "";
 			$this->cliente->HrefValue = "";
 			$this->cliente->TooltipValue = "";
+
+			// libro
+			$this->libro->LinkCustomAttributes = "";
+			$this->libro->HrefValue = "";
+			$this->libro->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1947,6 +1971,37 @@ while ($devolucion_list->RecCnt < $devolucion_list->StopRec) {
 <span id="el<?php echo $devolucion_list->RowCnt ?>_devolucion_cliente">
 <span<?php echo $devolucion->cliente->ViewAttributes() ?>>
 <?php echo $devolucion->cliente->ListViewValue() ?></span>
+</span>
+</div></div>
+		</div>
+		<?php } ?>
+	<?php } ?>
+	<?php if ($devolucion->libro->Visible) { // libro ?>
+		<?php if ($devolucion->RowType == EW_ROWTYPE_VIEW) { // View record ?>
+		<tr>
+			<td class="ewTableHeader"><span class="devolucion_libro">
+<?php if ($devolucion->Export <> "" || $devolucion->SortUrl($devolucion->libro) == "") { ?>
+				<div class="ewTableHeaderCaption"><?php echo $devolucion->libro->FldCaption() ?></div>
+<?php } else { ?>
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $devolucion->SortUrl($devolucion->libro) ?>',2);">
+            	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $devolucion->libro->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($devolucion->libro->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($devolucion->libro->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+				</div>
+<?php } ?>
+			</span></td>
+			<td<?php echo $devolucion->libro->CellAttributes() ?>>
+<span id="el<?php echo $devolucion_list->RowCnt ?>_devolucion_libro">
+<span<?php echo $devolucion->libro->ViewAttributes() ?>>
+<?php echo $devolucion->libro->ListViewValue() ?></span>
+</span>
+</td>
+		</tr>
+		<?php } else { // Add/edit record ?>
+		<div class="form-group devolucion_libro">
+			<label class="col-sm-2 control-label ewLabel"><?php echo $devolucion->libro->FldCaption() ?></label>
+			<div class="col-sm-10"><div<?php echo $devolucion->libro->CellAttributes() ?>>
+<span id="el<?php echo $devolucion_list->RowCnt ?>_devolucion_libro">
+<span<?php echo $devolucion->libro->ViewAttributes() ?>>
+<?php echo $devolucion->libro->ListViewValue() ?></span>
 </span>
 </div></div>
 		</div>

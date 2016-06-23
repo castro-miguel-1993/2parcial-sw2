@@ -11,6 +11,8 @@ class cpedido extends cTable {
 	var $empleado;
 	var $fecha;
 	var $cliente;
+	var $libro;
+	var $cantidad;
 
 	//
 	// Table class constructor
@@ -59,6 +61,15 @@ class cpedido extends cTable {
 		// cliente
 		$this->cliente = new cField('pedido', 'pedido', 'x_cliente', 'cliente', '`cliente`', '`cliente`', 200, -1, FALSE, '`cliente`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->fields['cliente'] = &$this->cliente;
+
+		// libro
+		$this->libro = new cField('pedido', 'pedido', 'x_libro', 'libro', '`libro`', '`libro`', 200, -1, FALSE, '`libro`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->fields['libro'] = &$this->libro;
+
+		// cantidad
+		$this->cantidad = new cField('pedido', 'pedido', 'x_cantidad', 'cantidad', '`cantidad`', '`cantidad`', 3, -1, FALSE, '`cantidad`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->cantidad->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
+		$this->fields['cantidad'] = &$this->cantidad;
 	}
 
 	// Multiple column sort
@@ -550,6 +561,8 @@ class cpedido extends cTable {
 		$this->empleado->setDbValue($rs->fields('empleado'));
 		$this->fecha->setDbValue($rs->fields('fecha'));
 		$this->cliente->setDbValue($rs->fields('cliente'));
+		$this->libro->setDbValue($rs->fields('libro'));
+		$this->cantidad->setDbValue($rs->fields('cantidad'));
 	}
 
 	// Render list row values
@@ -564,6 +577,8 @@ class cpedido extends cTable {
 		// empleado
 		// fecha
 		// cliente
+		// libro
+		// cantidad
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -581,6 +596,14 @@ class cpedido extends cTable {
 		// cliente
 		$this->cliente->ViewValue = $this->cliente->CurrentValue;
 		$this->cliente->ViewCustomAttributes = "";
+
+		// libro
+		$this->libro->ViewValue = $this->libro->CurrentValue;
+		$this->libro->ViewCustomAttributes = "";
+
+		// cantidad
+		$this->cantidad->ViewValue = $this->cantidad->CurrentValue;
+		$this->cantidad->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -601,6 +624,16 @@ class cpedido extends cTable {
 		$this->cliente->LinkCustomAttributes = "";
 		$this->cliente->HrefValue = "";
 		$this->cliente->TooltipValue = "";
+
+		// libro
+		$this->libro->LinkCustomAttributes = "";
+		$this->libro->HrefValue = "";
+		$this->libro->TooltipValue = "";
+
+		// cantidad
+		$this->cantidad->LinkCustomAttributes = "";
+		$this->cantidad->HrefValue = "";
+		$this->cantidad->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -637,6 +670,18 @@ class cpedido extends cTable {
 		$this->cliente->EditValue = $this->cliente->CurrentValue;
 		$this->cliente->PlaceHolder = ew_RemoveHtml($this->cliente->FldCaption());
 
+		// libro
+		$this->libro->EditAttrs["class"] = "form-control";
+		$this->libro->EditCustomAttributes = "";
+		$this->libro->EditValue = $this->libro->CurrentValue;
+		$this->libro->PlaceHolder = ew_RemoveHtml($this->libro->FldCaption());
+
+		// cantidad
+		$this->cantidad->EditAttrs["class"] = "form-control";
+		$this->cantidad->EditCustomAttributes = "";
+		$this->cantidad->EditValue = $this->cantidad->CurrentValue;
+		$this->cantidad->PlaceHolder = ew_RemoveHtml($this->cantidad->FldCaption());
+
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -668,11 +713,15 @@ class cpedido extends cTable {
 					if ($this->empleado->Exportable) $Doc->ExportCaption($this->empleado);
 					if ($this->fecha->Exportable) $Doc->ExportCaption($this->fecha);
 					if ($this->cliente->Exportable) $Doc->ExportCaption($this->cliente);
+					if ($this->libro->Exportable) $Doc->ExportCaption($this->libro);
+					if ($this->cantidad->Exportable) $Doc->ExportCaption($this->cantidad);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->empleado->Exportable) $Doc->ExportCaption($this->empleado);
 					if ($this->fecha->Exportable) $Doc->ExportCaption($this->fecha);
 					if ($this->cliente->Exportable) $Doc->ExportCaption($this->cliente);
+					if ($this->libro->Exportable) $Doc->ExportCaption($this->libro);
+					if ($this->cantidad->Exportable) $Doc->ExportCaption($this->cantidad);
 				}
 				$Doc->EndExportRow();
 			}
@@ -708,11 +757,15 @@ class cpedido extends cTable {
 						if ($this->empleado->Exportable) $Doc->ExportField($this->empleado);
 						if ($this->fecha->Exportable) $Doc->ExportField($this->fecha);
 						if ($this->cliente->Exportable) $Doc->ExportField($this->cliente);
+						if ($this->libro->Exportable) $Doc->ExportField($this->libro);
+						if ($this->cantidad->Exportable) $Doc->ExportField($this->cantidad);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->empleado->Exportable) $Doc->ExportField($this->empleado);
 						if ($this->fecha->Exportable) $Doc->ExportField($this->fecha);
 						if ($this->cliente->Exportable) $Doc->ExportField($this->cliente);
+						if ($this->libro->Exportable) $Doc->ExportField($this->libro);
+						if ($this->cantidad->Exportable) $Doc->ExportField($this->cantidad);
 					}
 					$Doc->EndExportRow();
 				}

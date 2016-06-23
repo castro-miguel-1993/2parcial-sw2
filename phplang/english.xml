@@ -438,8 +438,6 @@
 	<project><phrase id="footertext" value="&amp;copy;2016 e.World Technology Ltd. All rights reserved."/>
 <menu id="1"><phrase id="menutext" value="cliente"/>
 </menu>
-<menu id="2"><phrase id="menutext" value="detalle"/>
-</menu>
 <menu id="3"><phrase id="menutext" value="devolucion"/>
 </menu>
 <menu id="5"><phrase id="menutext" value="libro"/>
@@ -447,8 +445,6 @@
 <menu id="6"><phrase id="menutext" value="pedido"/>
 </menu>
 <menu id="7"><phrase id="menutext" value="usuario"/>
-</menu>
-<menu id="8"><phrase id="menutext" value="administrador"/>
 </menu>
 <menu id="9"><phrase id="menutext" value="inicio"/>
 </menu>
@@ -460,14 +456,6 @@
 <field id="ci"><phrase id="fldcaption" value="ci"/>
 </field>
 </table>
-<table id="detalle"><phrase id="tblcaption" value="detalle"/>
-<field id="id"><phrase id="fldcaption" value="id"/>
-</field>
-<field id="pedido"><phrase id="fldcaption" value="pedido"/>
-</field>
-<field id="libro"><phrase id="fldcaption" value="libro"/>
-</field>
-</table>
 <table id="devolucion"><phrase id="tblcaption" value="devolucion"/>
 <field id="id"><phrase id="fldcaption" value="id"/>
 </field>
@@ -476,6 +464,8 @@
 <field id="fecha"><phrase id="fldcaption" value="fecha"/>
 </field>
 <field id="cliente"><phrase id="fldcaption" value="cliente"/>
+</field>
+<field id="libro"><phrase id="fldcaption" value="libro"/>
 </field>
 </table>
 <table id="libro"><phrase id="tblcaption" value="libro"/>
@@ -499,6 +489,10 @@
 </field>
 <field id="cliente"><phrase id="fldcaption" value="cliente"/>
 </field>
+<field id="libro"><phrase id="fldcaption" value="libro"/>
+</field>
+<field id="cantidad"><phrase id="fldcaption" value="cantidad"/>
+</field>
 </table>
 <table id="usuario"><phrase id="tblcaption" value="usuario"/>
 <field id="id"><phrase id="fldcaption" value="id"/>
@@ -506,16 +500,6 @@
 <field id="nombre"><phrase id="fldcaption" value="nombre"/>
 </field>
 <field id="ci"><phrase id="fldcaption" value="ci"/>
-</field>
-</table>
-<table id="administrador"><phrase id="tblcaption" value="administrador"/>
-<field id="id"><phrase id="fldcaption" value="id"/>
-</field>
-<field id="ci"><phrase id="fldcaption" value="ci"/>
-</field>
-<field id="nombre"><phrase id="fldcaption" value="nombre"/>
-</field>
-<field id="cargo"><phrase id="fldcaption" value="cargo"/>
 </field>
 </table>
 <table id="inicio"><phrase id="tblcaption" value="inicio"/>
