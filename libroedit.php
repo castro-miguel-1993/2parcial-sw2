@@ -456,9 +456,6 @@ class clibro_edit extends clibro {
 		if (!$this->cantidad->FldIsDetailKey) {
 			$this->cantidad->setFormValue($objForm->GetValue("x_cantidad"));
 		}
-		if (!$this->empresa->FldIsDetailKey) {
-			$this->empresa->setFormValue($objForm->GetValue("x_empresa"));
-		}
 	}
 
 	// Restore form values
@@ -470,7 +467,6 @@ class clibro_edit extends clibro {
 		$this->titulo->CurrentValue = $this->titulo->FormValue;
 		$this->aF1o->CurrentValue = $this->aF1o->FormValue;
 		$this->cantidad->CurrentValue = $this->cantidad->FormValue;
-		$this->empresa->CurrentValue = $this->empresa->FormValue;
 	}
 
 	// Load row based on key values
@@ -507,7 +503,6 @@ class clibro_edit extends clibro {
 		$this->titulo->setDbValue($rs->fields('titulo'));
 		$this->aF1o->setDbValue($rs->fields('año'));
 		$this->cantidad->setDbValue($rs->fields('cantidad'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -519,7 +514,6 @@ class clibro_edit extends clibro {
 		$this->titulo->DbValue = $row['titulo'];
 		$this->aF1o->DbValue = $row['año'];
 		$this->cantidad->DbValue = $row['cantidad'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Render row values based on field settings
@@ -537,7 +531,6 @@ class clibro_edit extends clibro {
 		// titulo
 		// año
 		// cantidad
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -560,10 +553,6 @@ class clibro_edit extends clibro {
 		// cantidad
 		$this->cantidad->ViewValue = $this->cantidad->CurrentValue;
 		$this->cantidad->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
 
 			// id
 			$this->id->LinkCustomAttributes = "";
@@ -589,11 +578,6 @@ class clibro_edit extends clibro {
 			$this->cantidad->LinkCustomAttributes = "";
 			$this->cantidad->HrefValue = "";
 			$this->cantidad->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
 			// id
@@ -626,12 +610,6 @@ class clibro_edit extends clibro {
 			$this->cantidad->EditValue = ew_HtmlEncode($this->cantidad->CurrentValue);
 			$this->cantidad->PlaceHolder = ew_RemoveHtml($this->cantidad->FldCaption());
 
-			// empresa
-			$this->empresa->EditAttrs["class"] = "form-control";
-			$this->empresa->EditCustomAttributes = "";
-			$this->empresa->EditValue = ew_HtmlEncode($this->empresa->CurrentValue);
-			$this->empresa->PlaceHolder = ew_RemoveHtml($this->empresa->FldCaption());
-
 			// Edit refer script
 			// id
 
@@ -653,10 +631,6 @@ class clibro_edit extends clibro {
 			// cantidad
 			$this->cantidad->LinkCustomAttributes = "";
 			$this->cantidad->HrefValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -693,12 +667,6 @@ class clibro_edit extends clibro {
 		}
 		if (!ew_CheckInteger($this->cantidad->FormValue)) {
 			ew_AddMessage($gsFormError, $this->cantidad->FldErrMsg());
-		}
-		if (!$this->empresa->FldIsDetailKey && !is_null($this->empresa->FormValue) && $this->empresa->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->empresa->FldCaption(), $this->empresa->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->empresa->FormValue)) {
-			ew_AddMessage($gsFormError, $this->empresa->FldErrMsg());
 		}
 
 		// Return validate result
@@ -747,9 +715,6 @@ class clibro_edit extends clibro {
 
 			// cantidad
 			$this->cantidad->SetDbValueDef($rsnew, $this->cantidad->CurrentValue, 0, $this->cantidad->ReadOnly);
-
-			// empresa
-			$this->empresa->SetDbValueDef($rsnew, $this->empresa->CurrentValue, 0, $this->empresa->ReadOnly);
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -916,12 +881,6 @@ flibroedit.Validate = function() {
 			elm = this.GetElements("x" + infix + "_cantidad");
 			if (elm && !ew_CheckInteger(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($libro->cantidad->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_empresa");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $libro->empresa->FldCaption(), $libro->empresa->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_empresa");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($libro->empresa->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -1028,16 +987,6 @@ $libro_edit->ShowMessage();
 <input type="text" data-table="libro" data-field="x_cantidad" name="x_cantidad" id="x_cantidad" size="30" placeholder="<?php echo ew_HtmlEncode($libro->cantidad->getPlaceHolder()) ?>" value="<?php echo $libro->cantidad->EditValue ?>"<?php echo $libro->cantidad->EditAttributes() ?>>
 </span>
 <?php echo $libro->cantidad->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($libro->empresa->Visible) { // empresa ?>
-	<div id="r_empresa" class="form-group">
-		<label id="elh_libro_empresa" for="x_empresa" class="col-sm-2 control-label ewLabel"><?php echo $libro->empresa->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $libro->empresa->CellAttributes() ?>>
-<span id="el_libro_empresa">
-<input type="text" data-table="libro" data-field="x_empresa" name="x_empresa" id="x_empresa" size="30" placeholder="<?php echo ew_HtmlEncode($libro->empresa->getPlaceHolder()) ?>" value="<?php echo $libro->empresa->EditValue ?>"<?php echo $libro->empresa->EditAttributes() ?>>
-</span>
-<?php echo $libro->empresa->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

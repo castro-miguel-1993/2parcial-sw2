@@ -11,7 +11,6 @@ class cadministrador extends cTable {
 	var $ci;
 	var $nombre;
 	var $cargo;
-	var $empresa;
 
 	//
 	// Table class constructor
@@ -60,15 +59,10 @@ class cadministrador extends cTable {
 		// cargo
 		$this->cargo = new cField('administrador', 'administrador', 'x_cargo', 'cargo', '`cargo`', '`cargo`', 200, -1, FALSE, '`cargo`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->fields['cargo'] = &$this->cargo;
-
-		// empresa
-		$this->empresa = new cField('administrador', 'administrador', 'x_empresa', 'empresa', '`empresa`', '`empresa`', 3, -1, FALSE, '`empresa`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->empresa->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
-		$this->fields['empresa'] = &$this->empresa;
 	}
 
-	// Single column sort
-	function UpdateSort(&$ofld) {
+	// Multiple column sort
+	function UpdateSort(&$ofld, $ctrl) {
 		if ($this->CurrentOrder == $ofld->FldName) {
 			$sSortField = $ofld->FldExpression;
 			$sLastSort = $ofld->getSort();
@@ -78,9 +72,20 @@ class cadministrador extends cTable {
 				$sThisSort = ($sLastSort == "ASC") ? "DESC" : "ASC";
 			}
 			$ofld->setSort($sThisSort);
-			$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			if ($ctrl) {
+				$sOrderBy = $this->getSessionOrderBy();
+				if (strpos($sOrderBy, $sSortField . " " . $sLastSort) !== FALSE) {
+					$sOrderBy = str_replace($sSortField . " " . $sLastSort, $sSortField . " " . $sThisSort, $sOrderBy);
+				} else {
+					if ($sOrderBy <> "") $sOrderBy .= ", ";
+					$sOrderBy .= $sSortField . " " . $sThisSort;
+				}
+				$this->setSessionOrderBy($sOrderBy); // Save to Session
+			} else {
+				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			}
 		} else {
-			$ofld->setSort("");
+			if (!$ctrl) $ofld->setSort("");
 		}
 	}
 
@@ -545,7 +550,6 @@ class cadministrador extends cTable {
 		$this->ci->setDbValue($rs->fields('ci'));
 		$this->nombre->setDbValue($rs->fields('nombre'));
 		$this->cargo->setDbValue($rs->fields('cargo'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Render list row values
@@ -560,7 +564,6 @@ class cadministrador extends cTable {
 		// ci
 		// nombre
 		// cargo
-		// empresa
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -577,10 +580,6 @@ class cadministrador extends cTable {
 		// cargo
 		$this->cargo->ViewValue = $this->cargo->CurrentValue;
 		$this->cargo->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -601,11 +600,6 @@ class cadministrador extends cTable {
 		$this->cargo->LinkCustomAttributes = "";
 		$this->cargo->HrefValue = "";
 		$this->cargo->TooltipValue = "";
-
-		// empresa
-		$this->empresa->LinkCustomAttributes = "";
-		$this->empresa->HrefValue = "";
-		$this->empresa->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -642,12 +636,6 @@ class cadministrador extends cTable {
 		$this->cargo->EditValue = $this->cargo->CurrentValue;
 		$this->cargo->PlaceHolder = ew_RemoveHtml($this->cargo->FldCaption());
 
-		// empresa
-		$this->empresa->EditAttrs["class"] = "form-control";
-		$this->empresa->EditCustomAttributes = "";
-		$this->empresa->EditValue = $this->empresa->CurrentValue;
-		$this->empresa->PlaceHolder = ew_RemoveHtml($this->empresa->FldCaption());
-
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -679,13 +667,11 @@ class cadministrador extends cTable {
 					if ($this->ci->Exportable) $Doc->ExportCaption($this->ci);
 					if ($this->nombre->Exportable) $Doc->ExportCaption($this->nombre);
 					if ($this->cargo->Exportable) $Doc->ExportCaption($this->cargo);
-					if ($this->empresa->Exportable) $Doc->ExportCaption($this->empresa);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->ci->Exportable) $Doc->ExportCaption($this->ci);
 					if ($this->nombre->Exportable) $Doc->ExportCaption($this->nombre);
 					if ($this->cargo->Exportable) $Doc->ExportCaption($this->cargo);
-					if ($this->empresa->Exportable) $Doc->ExportCaption($this->empresa);
 				}
 				$Doc->EndExportRow();
 			}
@@ -721,13 +707,11 @@ class cadministrador extends cTable {
 						if ($this->ci->Exportable) $Doc->ExportField($this->ci);
 						if ($this->nombre->Exportable) $Doc->ExportField($this->nombre);
 						if ($this->cargo->Exportable) $Doc->ExportField($this->cargo);
-						if ($this->empresa->Exportable) $Doc->ExportField($this->empresa);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->ci->Exportable) $Doc->ExportField($this->ci);
 						if ($this->nombre->Exportable) $Doc->ExportField($this->nombre);
 						if ($this->cargo->Exportable) $Doc->ExportField($this->cargo);
-						if ($this->empresa->Exportable) $Doc->ExportField($this->empresa);
 					}
 					$Doc->EndExportRow();
 				}

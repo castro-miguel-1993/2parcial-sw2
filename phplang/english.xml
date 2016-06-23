@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ew-language date="2016/6/22" version="12.0.6" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2016/6/23" version="12.0.6" id="en" name="English" desc="English" author="e.World Technology Ltd.">
 	<locale>
 		<phrase id="locale" value=""/><!-- *** system locale for this language -->
 		<phrase id="use_system_locale" value="1"/><!-- *** change to "0" to disable system locale and use the following settings *** -->
@@ -442,8 +442,6 @@
 </menu>
 <menu id="3"><phrase id="menutext" value="devolucion"/>
 </menu>
-<menu id="4"><phrase id="menutext" value="empresa"/>
-</menu>
 <menu id="5"><phrase id="menutext" value="libro"/>
 </menu>
 <menu id="6"><phrase id="menutext" value="pedido"/>
@@ -452,14 +450,14 @@
 </menu>
 <menu id="8"><phrase id="menutext" value="administrador"/>
 </menu>
+<menu id="9"><phrase id="menutext" value="inicio"/>
+</menu>
 <table id="cliente"><phrase id="tblcaption" value="cliente"/>
 <field id="id"><phrase id="fldcaption" value="id"/>
 </field>
 <field id="nombre"><phrase id="fldcaption" value="nombre"/>
 </field>
 <field id="ci"><phrase id="fldcaption" value="ci"/>
-</field>
-<field id="empresa"><phrase id="fldcaption" value="empresa"/>
 </field>
 </table>
 <table id="detalle"><phrase id="tblcaption" value="detalle"/>
@@ -468,8 +466,6 @@
 <field id="pedido"><phrase id="fldcaption" value="pedido"/>
 </field>
 <field id="libro"><phrase id="fldcaption" value="libro"/>
-</field>
-<field id="empresa"><phrase id="fldcaption" value="empresa"/>
 </field>
 </table>
 <table id="devolucion"><phrase id="tblcaption" value="devolucion"/>
@@ -480,16 +476,6 @@
 <field id="fecha"><phrase id="fldcaption" value="fecha"/>
 </field>
 <field id="cliente"><phrase id="fldcaption" value="cliente"/>
-</field>
-<field id="empresa"><phrase id="fldcaption" value="empresa"/>
-</field>
-</table>
-<table id="empresa"><phrase id="tblcaption" value="empresa"/>
-<field id="id"><phrase id="fldcaption" value="id"/>
-</field>
-<field id="nombre"><phrase id="fldcaption" value="nombre"/>
-</field>
-<field id="descripcion"><phrase id="fldcaption" value="descripcion"/>
 </field>
 </table>
 <table id="libro"><phrase id="tblcaption" value="libro"/>
@@ -503,8 +489,6 @@
 </field>
 <field id="cantidad"><phrase id="fldcaption" value="cantidad"/>
 </field>
-<field id="empresa"><phrase id="fldcaption" value="empresa"/>
-</field>
 </table>
 <table id="pedido"><phrase id="tblcaption" value="pedido"/>
 <field id="id"><phrase id="fldcaption" value="id"/>
@@ -515,8 +499,6 @@
 </field>
 <field id="cliente"><phrase id="fldcaption" value="cliente"/>
 </field>
-<field id="empresa"><phrase id="fldcaption" value="empresa"/>
-</field>
 </table>
 <table id="usuario"><phrase id="tblcaption" value="usuario"/>
 <field id="id"><phrase id="fldcaption" value="id"/>
@@ -524,8 +506,6 @@
 <field id="nombre"><phrase id="fldcaption" value="nombre"/>
 </field>
 <field id="ci"><phrase id="fldcaption" value="ci"/>
-</field>
-<field id="empresa"><phrase id="fldcaption" value="empresa"/>
 </field>
 </table>
 <table id="administrador"><phrase id="tblcaption" value="administrador"/>
@@ -537,7 +517,9 @@
 </field>
 <field id="cargo"><phrase id="fldcaption" value="cargo"/>
 </field>
-<field id="empresa"><phrase id="fldcaption" value="empresa"/>
+</table>
+<table id="inicio"><phrase id="tblcaption" value="inicio"/>
+<field id="id"><phrase id="fldcaption" value="id"/>
 </field>
 </table>
 </project>

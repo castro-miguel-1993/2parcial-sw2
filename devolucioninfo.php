@@ -11,7 +11,6 @@ class cdevolucion extends cTable {
 	var $empleado;
 	var $fecha;
 	var $cliente;
-	var $empresa;
 
 	//
 	// Table class constructor
@@ -60,15 +59,10 @@ class cdevolucion extends cTable {
 		// cliente
 		$this->cliente = new cField('devolucion', 'devolucion', 'x_cliente', 'cliente', '`cliente`', '`cliente`', 200, -1, FALSE, '`cliente`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->fields['cliente'] = &$this->cliente;
-
-		// empresa
-		$this->empresa = new cField('devolucion', 'devolucion', 'x_empresa', 'empresa', '`empresa`', '`empresa`', 3, -1, FALSE, '`empresa`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->empresa->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
-		$this->fields['empresa'] = &$this->empresa;
 	}
 
-	// Single column sort
-	function UpdateSort(&$ofld) {
+	// Multiple column sort
+	function UpdateSort(&$ofld, $ctrl) {
 		if ($this->CurrentOrder == $ofld->FldName) {
 			$sSortField = $ofld->FldExpression;
 			$sLastSort = $ofld->getSort();
@@ -78,9 +72,20 @@ class cdevolucion extends cTable {
 				$sThisSort = ($sLastSort == "ASC") ? "DESC" : "ASC";
 			}
 			$ofld->setSort($sThisSort);
-			$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			if ($ctrl) {
+				$sOrderBy = $this->getSessionOrderBy();
+				if (strpos($sOrderBy, $sSortField . " " . $sLastSort) !== FALSE) {
+					$sOrderBy = str_replace($sSortField . " " . $sLastSort, $sSortField . " " . $sThisSort, $sOrderBy);
+				} else {
+					if ($sOrderBy <> "") $sOrderBy .= ", ";
+					$sOrderBy .= $sSortField . " " . $sThisSort;
+				}
+				$this->setSessionOrderBy($sOrderBy); // Save to Session
+			} else {
+				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			}
 		} else {
-			$ofld->setSort("");
+			if (!$ctrl) $ofld->setSort("");
 		}
 	}
 
@@ -545,7 +550,6 @@ class cdevolucion extends cTable {
 		$this->empleado->setDbValue($rs->fields('empleado'));
 		$this->fecha->setDbValue($rs->fields('fecha'));
 		$this->cliente->setDbValue($rs->fields('cliente'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Render list row values
@@ -560,7 +564,6 @@ class cdevolucion extends cTable {
 		// empleado
 		// fecha
 		// cliente
-		// empresa
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -577,10 +580,6 @@ class cdevolucion extends cTable {
 		// cliente
 		$this->cliente->ViewValue = $this->cliente->CurrentValue;
 		$this->cliente->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -601,11 +600,6 @@ class cdevolucion extends cTable {
 		$this->cliente->LinkCustomAttributes = "";
 		$this->cliente->HrefValue = "";
 		$this->cliente->TooltipValue = "";
-
-		// empresa
-		$this->empresa->LinkCustomAttributes = "";
-		$this->empresa->HrefValue = "";
-		$this->empresa->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -642,12 +636,6 @@ class cdevolucion extends cTable {
 		$this->cliente->EditValue = $this->cliente->CurrentValue;
 		$this->cliente->PlaceHolder = ew_RemoveHtml($this->cliente->FldCaption());
 
-		// empresa
-		$this->empresa->EditAttrs["class"] = "form-control";
-		$this->empresa->EditCustomAttributes = "";
-		$this->empresa->EditValue = $this->empresa->CurrentValue;
-		$this->empresa->PlaceHolder = ew_RemoveHtml($this->empresa->FldCaption());
-
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -679,13 +667,11 @@ class cdevolucion extends cTable {
 					if ($this->empleado->Exportable) $Doc->ExportCaption($this->empleado);
 					if ($this->fecha->Exportable) $Doc->ExportCaption($this->fecha);
 					if ($this->cliente->Exportable) $Doc->ExportCaption($this->cliente);
-					if ($this->empresa->Exportable) $Doc->ExportCaption($this->empresa);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->empleado->Exportable) $Doc->ExportCaption($this->empleado);
 					if ($this->fecha->Exportable) $Doc->ExportCaption($this->fecha);
 					if ($this->cliente->Exportable) $Doc->ExportCaption($this->cliente);
-					if ($this->empresa->Exportable) $Doc->ExportCaption($this->empresa);
 				}
 				$Doc->EndExportRow();
 			}
@@ -721,13 +707,11 @@ class cdevolucion extends cTable {
 						if ($this->empleado->Exportable) $Doc->ExportField($this->empleado);
 						if ($this->fecha->Exportable) $Doc->ExportField($this->fecha);
 						if ($this->cliente->Exportable) $Doc->ExportField($this->cliente);
-						if ($this->empresa->Exportable) $Doc->ExportField($this->empresa);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->empleado->Exportable) $Doc->ExportField($this->empleado);
 						if ($this->fecha->Exportable) $Doc->ExportField($this->fecha);
 						if ($this->cliente->Exportable) $Doc->ExportField($this->cliente);
-						if ($this->empresa->Exportable) $Doc->ExportField($this->empresa);
 					}
 					$Doc->EndExportRow();
 				}

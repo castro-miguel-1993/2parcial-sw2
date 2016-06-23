@@ -1,17 +1,13 @@
 <?php
 
 // Global variable for table object
-$libro = NULL;
+$inicio = NULL;
 
 //
-// Table class for libro
+// Table class for inicio
 //
-class clibro extends cTable {
+class cinicio extends cTable {
 	var $id;
-	var $autor;
-	var $titulo;
-	var $aF1o;
-	var $cantidad;
 
 	//
 	// Table class constructor
@@ -21,12 +17,12 @@ class clibro extends cTable {
 
 		// Language object
 		if (!isset($Language)) $Language = new cLanguage();
-		$this->TableVar = 'libro';
-		$this->TableName = 'libro';
+		$this->TableVar = 'inicio';
+		$this->TableName = 'inicio';
 		$this->TableType = 'TABLE';
 
 		// Update Table
-		$this->UpdateTable = "`libro`";
+		$this->UpdateTable = "`inicio`";
 		$this->DBID = 'DB';
 		$this->ExportAll = TRUE;
 		$this->ExportPageBreakCount = 0; // Page break per every n record (PDF only)
@@ -44,26 +40,9 @@ class clibro extends cTable {
 		$this->BasicSearch = new cBasicSearch($this->TableVar);
 
 		// id
-		$this->id = new cField('libro', 'libro', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
+		$this->id = new cField('inicio', 'inicio', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
 		$this->id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['id'] = &$this->id;
-
-		// autor
-		$this->autor = new cField('libro', 'libro', 'x_autor', 'autor', '`autor`', '`autor`', 200, -1, FALSE, '`autor`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->fields['autor'] = &$this->autor;
-
-		// titulo
-		$this->titulo = new cField('libro', 'libro', 'x_titulo', 'titulo', '`titulo`', '`titulo`', 200, -1, FALSE, '`titulo`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->fields['titulo'] = &$this->titulo;
-
-		// año
-		$this->aF1o = new cField('libro', 'libro', 'x_aF1o', 'año', '`año`', '`año`', 200, -1, FALSE, '`año`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->fields['año'] = &$this->aF1o;
-
-		// cantidad
-		$this->cantidad = new cField('libro', 'libro', 'x_cantidad', 'cantidad', '`cantidad`', '`cantidad`', 3, -1, FALSE, '`cantidad`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->cantidad->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
-		$this->fields['cantidad'] = &$this->cantidad;
 	}
 
 	// Multiple column sort
@@ -98,7 +77,7 @@ class clibro extends cTable {
 	var $_SqlFrom = "";
 
 	function getSqlFrom() { // From
-		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`libro`";
+		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`inicio`";
 	}
 
 	function SqlFrom() { // For backward compatibility
@@ -393,7 +372,7 @@ class clibro extends cTable {
 		if (@$_SESSION[$name] <> "") {
 			return $_SESSION[$name];
 		} else {
-			return "librolist.php";
+			return "iniciolist.php";
 		}
 	}
 
@@ -403,30 +382,30 @@ class clibro extends cTable {
 
 	// List URL
 	function GetListUrl() {
-		return "librolist.php";
+		return "iniciolist.php";
 	}
 
 	// View URL
 	function GetViewUrl($parm = "") {
 		if ($parm <> "")
-			$url = $this->KeyUrl("libroview.php", $this->UrlParm($parm));
+			$url = $this->KeyUrl("inicioview.php", $this->UrlParm($parm));
 		else
-			$url = $this->KeyUrl("libroview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+			$url = $this->KeyUrl("inicioview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
 		return $this->AddMasterUrl($url);
 	}
 
 	// Add URL
 	function GetAddUrl($parm = "") {
 		if ($parm <> "")
-			$url = "libroadd.php?" . $this->UrlParm($parm);
+			$url = "inicioadd.php?" . $this->UrlParm($parm);
 		else
-			$url = "libroadd.php";
+			$url = "inicioadd.php";
 		return $this->AddMasterUrl($url);
 	}
 
 	// Edit URL
 	function GetEditUrl($parm = "") {
-		$url = $this->KeyUrl("libroedit.php", $this->UrlParm($parm));
+		$url = $this->KeyUrl("inicioedit.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -438,7 +417,7 @@ class clibro extends cTable {
 
 	// Copy URL
 	function GetCopyUrl($parm = "") {
-		$url = $this->KeyUrl("libroadd.php", $this->UrlParm($parm));
+		$url = $this->KeyUrl("inicioadd.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -450,7 +429,7 @@ class clibro extends cTable {
 
 	// Delete URL
 	function GetDeleteUrl() {
-		return $this->KeyUrl("librodelete.php", $this->UrlParm());
+		return $this->KeyUrl("iniciodelete.php", $this->UrlParm());
 	}
 
 	// Add master url
@@ -552,10 +531,6 @@ class clibro extends cTable {
 	// Load row values from recordset
 	function LoadListRowValues(&$rs) {
 		$this->id->setDbValue($rs->fields('id'));
-		$this->autor->setDbValue($rs->fields('autor'));
-		$this->titulo->setDbValue($rs->fields('titulo'));
-		$this->aF1o->setDbValue($rs->fields('año'));
-		$this->cantidad->setDbValue($rs->fields('cantidad'));
 	}
 
 	// Render list row values
@@ -567,55 +542,15 @@ class clibro extends cTable {
 
    // Common render codes
 		// id
-		// autor
-		// titulo
-		// año
-		// cantidad
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// autor
-		$this->autor->ViewValue = $this->autor->CurrentValue;
-		$this->autor->ViewCustomAttributes = "";
-
-		// titulo
-		$this->titulo->ViewValue = $this->titulo->CurrentValue;
-		$this->titulo->ViewCustomAttributes = "";
-
-		// año
-		$this->aF1o->ViewValue = $this->aF1o->CurrentValue;
-		$this->aF1o->ViewCustomAttributes = "";
-
-		// cantidad
-		$this->cantidad->ViewValue = $this->cantidad->CurrentValue;
-		$this->cantidad->ViewCustomAttributes = "";
-
 		// id
 		$this->id->LinkCustomAttributes = "";
 		$this->id->HrefValue = "";
 		$this->id->TooltipValue = "";
-
-		// autor
-		$this->autor->LinkCustomAttributes = "";
-		$this->autor->HrefValue = "";
-		$this->autor->TooltipValue = "";
-
-		// titulo
-		$this->titulo->LinkCustomAttributes = "";
-		$this->titulo->HrefValue = "";
-		$this->titulo->TooltipValue = "";
-
-		// año
-		$this->aF1o->LinkCustomAttributes = "";
-		$this->aF1o->HrefValue = "";
-		$this->aF1o->TooltipValue = "";
-
-		// cantidad
-		$this->cantidad->LinkCustomAttributes = "";
-		$this->cantidad->HrefValue = "";
-		$this->cantidad->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -633,30 +568,6 @@ class clibro extends cTable {
 		$this->id->EditCustomAttributes = "";
 		$this->id->EditValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
-
-		// autor
-		$this->autor->EditAttrs["class"] = "form-control";
-		$this->autor->EditCustomAttributes = "";
-		$this->autor->EditValue = $this->autor->CurrentValue;
-		$this->autor->PlaceHolder = ew_RemoveHtml($this->autor->FldCaption());
-
-		// titulo
-		$this->titulo->EditAttrs["class"] = "form-control";
-		$this->titulo->EditCustomAttributes = "";
-		$this->titulo->EditValue = $this->titulo->CurrentValue;
-		$this->titulo->PlaceHolder = ew_RemoveHtml($this->titulo->FldCaption());
-
-		// año
-		$this->aF1o->EditAttrs["class"] = "form-control";
-		$this->aF1o->EditCustomAttributes = "";
-		$this->aF1o->EditValue = $this->aF1o->CurrentValue;
-		$this->aF1o->PlaceHolder = ew_RemoveHtml($this->aF1o->FldCaption());
-
-		// cantidad
-		$this->cantidad->EditAttrs["class"] = "form-control";
-		$this->cantidad->EditCustomAttributes = "";
-		$this->cantidad->EditValue = $this->cantidad->CurrentValue;
-		$this->cantidad->PlaceHolder = ew_RemoveHtml($this->cantidad->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -686,16 +597,8 @@ class clibro extends cTable {
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
-					if ($this->autor->Exportable) $Doc->ExportCaption($this->autor);
-					if ($this->titulo->Exportable) $Doc->ExportCaption($this->titulo);
-					if ($this->aF1o->Exportable) $Doc->ExportCaption($this->aF1o);
-					if ($this->cantidad->Exportable) $Doc->ExportCaption($this->cantidad);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
-					if ($this->autor->Exportable) $Doc->ExportCaption($this->autor);
-					if ($this->titulo->Exportable) $Doc->ExportCaption($this->titulo);
-					if ($this->aF1o->Exportable) $Doc->ExportCaption($this->aF1o);
-					if ($this->cantidad->Exportable) $Doc->ExportCaption($this->cantidad);
 				}
 				$Doc->EndExportRow();
 			}
@@ -728,16 +631,8 @@ class clibro extends cTable {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
-						if ($this->autor->Exportable) $Doc->ExportField($this->autor);
-						if ($this->titulo->Exportable) $Doc->ExportField($this->titulo);
-						if ($this->aF1o->Exportable) $Doc->ExportField($this->aF1o);
-						if ($this->cantidad->Exportable) $Doc->ExportField($this->cantidad);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
-						if ($this->autor->Exportable) $Doc->ExportField($this->autor);
-						if ($this->titulo->Exportable) $Doc->ExportField($this->titulo);
-						if ($this->aF1o->Exportable) $Doc->ExportField($this->aF1o);
-						if ($this->cantidad->Exportable) $Doc->ExportField($this->cantidad);
 					}
 					$Doc->EndExportRow();
 				}

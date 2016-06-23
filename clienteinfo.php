@@ -10,7 +10,6 @@ class ccliente extends cTable {
 	var $id;
 	var $nombre;
 	var $ci;
-	var $empresa;
 
 	//
 	// Table class constructor
@@ -55,15 +54,10 @@ class ccliente extends cTable {
 		$this->ci = new cField('cliente', 'cliente', 'x_ci', 'ci', '`ci`', '`ci`', 3, -1, FALSE, '`ci`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->ci->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['ci'] = &$this->ci;
-
-		// empresa
-		$this->empresa = new cField('cliente', 'cliente', 'x_empresa', 'empresa', '`empresa`', '`empresa`', 3, -1, FALSE, '`empresa`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->empresa->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
-		$this->fields['empresa'] = &$this->empresa;
 	}
 
-	// Single column sort
-	function UpdateSort(&$ofld) {
+	// Multiple column sort
+	function UpdateSort(&$ofld, $ctrl) {
 		if ($this->CurrentOrder == $ofld->FldName) {
 			$sSortField = $ofld->FldExpression;
 			$sLastSort = $ofld->getSort();
@@ -73,9 +67,20 @@ class ccliente extends cTable {
 				$sThisSort = ($sLastSort == "ASC") ? "DESC" : "ASC";
 			}
 			$ofld->setSort($sThisSort);
-			$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			if ($ctrl) {
+				$sOrderBy = $this->getSessionOrderBy();
+				if (strpos($sOrderBy, $sSortField . " " . $sLastSort) !== FALSE) {
+					$sOrderBy = str_replace($sSortField . " " . $sLastSort, $sSortField . " " . $sThisSort, $sOrderBy);
+				} else {
+					if ($sOrderBy <> "") $sOrderBy .= ", ";
+					$sOrderBy .= $sSortField . " " . $sThisSort;
+				}
+				$this->setSessionOrderBy($sOrderBy); // Save to Session
+			} else {
+				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			}
 		} else {
-			$ofld->setSort("");
+			if (!$ctrl) $ofld->setSort("");
 		}
 	}
 
@@ -539,7 +544,6 @@ class ccliente extends cTable {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->nombre->setDbValue($rs->fields('nombre'));
 		$this->ci->setDbValue($rs->fields('ci'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Render list row values
@@ -553,7 +557,6 @@ class ccliente extends cTable {
 		// id
 		// nombre
 		// ci
-		// empresa
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -566,10 +569,6 @@ class ccliente extends cTable {
 		// ci
 		$this->ci->ViewValue = $this->ci->CurrentValue;
 		$this->ci->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -585,11 +584,6 @@ class ccliente extends cTable {
 		$this->ci->LinkCustomAttributes = "";
 		$this->ci->HrefValue = "";
 		$this->ci->TooltipValue = "";
-
-		// empresa
-		$this->empresa->LinkCustomAttributes = "";
-		$this->empresa->HrefValue = "";
-		$this->empresa->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -619,12 +613,6 @@ class ccliente extends cTable {
 		$this->ci->EditCustomAttributes = "";
 		$this->ci->EditValue = $this->ci->CurrentValue;
 		$this->ci->PlaceHolder = ew_RemoveHtml($this->ci->FldCaption());
-
-		// empresa
-		$this->empresa->EditAttrs["class"] = "form-control";
-		$this->empresa->EditCustomAttributes = "";
-		$this->empresa->EditValue = $this->empresa->CurrentValue;
-		$this->empresa->PlaceHolder = ew_RemoveHtml($this->empresa->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -656,12 +644,10 @@ class ccliente extends cTable {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->nombre->Exportable) $Doc->ExportCaption($this->nombre);
 					if ($this->ci->Exportable) $Doc->ExportCaption($this->ci);
-					if ($this->empresa->Exportable) $Doc->ExportCaption($this->empresa);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->nombre->Exportable) $Doc->ExportCaption($this->nombre);
 					if ($this->ci->Exportable) $Doc->ExportCaption($this->ci);
-					if ($this->empresa->Exportable) $Doc->ExportCaption($this->empresa);
 				}
 				$Doc->EndExportRow();
 			}
@@ -696,12 +682,10 @@ class ccliente extends cTable {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->nombre->Exportable) $Doc->ExportField($this->nombre);
 						if ($this->ci->Exportable) $Doc->ExportField($this->ci);
-						if ($this->empresa->Exportable) $Doc->ExportField($this->empresa);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->nombre->Exportable) $Doc->ExportField($this->nombre);
 						if ($this->ci->Exportable) $Doc->ExportField($this->ci);
-						if ($this->empresa->Exportable) $Doc->ExportField($this->empresa);
 					}
 					$Doc->EndExportRow();
 				}

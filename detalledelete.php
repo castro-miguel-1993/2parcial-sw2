@@ -423,7 +423,6 @@ class cdetalle_delete extends cdetalle {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->pedido->setDbValue($rs->fields('pedido'));
 		$this->libro->setDbValue($rs->fields('libro'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -433,7 +432,6 @@ class cdetalle_delete extends cdetalle {
 		$this->id->DbValue = $row['id'];
 		$this->pedido->DbValue = $row['pedido'];
 		$this->libro->DbValue = $row['libro'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Render row values based on field settings
@@ -449,7 +447,6 @@ class cdetalle_delete extends cdetalle {
 		// id
 		// pedido
 		// libro
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -465,10 +462,6 @@ class cdetalle_delete extends cdetalle {
 		$this->libro->ViewValue = $this->libro->CurrentValue;
 		$this->libro->ViewCustomAttributes = "";
 
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
-
 			// id
 			$this->id->LinkCustomAttributes = "";
 			$this->id->HrefValue = "";
@@ -483,11 +476,6 @@ class cdetalle_delete extends cdetalle {
 			$this->libro->LinkCustomAttributes = "";
 			$this->libro->HrefValue = "";
 			$this->libro->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -727,9 +715,6 @@ $detalle_delete->ShowMessage();
 <?php if ($detalle->libro->Visible) { // libro ?>
 		<th><span id="elh_detalle_libro" class="detalle_libro"><?php echo $detalle->libro->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($detalle->empresa->Visible) { // empresa ?>
-		<th><span id="elh_detalle_empresa" class="detalle_empresa"><?php echo $detalle->empresa->FldCaption() ?></span></th>
-<?php } ?>
 	</tr>
 	</thead>
 	<tbody>
@@ -772,14 +757,6 @@ while (!$detalle_delete->Recordset->EOF) {
 <span id="el<?php echo $detalle_delete->RowCnt ?>_detalle_libro" class="detalle_libro">
 <span<?php echo $detalle->libro->ViewAttributes() ?>>
 <?php echo $detalle->libro->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($detalle->empresa->Visible) { // empresa ?>
-		<td<?php echo $detalle->empresa->CellAttributes() ?>>
-<span id="el<?php echo $detalle_delete->RowCnt ?>_detalle_empresa" class="detalle_empresa">
-<span<?php echo $detalle->empresa->ViewAttributes() ?>>
-<?php echo $detalle->empresa->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

@@ -479,8 +479,8 @@ class cdevolucion_list extends cdevolucion {
 		global $objForm, $Language, $gsFormError, $gsSearchError, $Security;
 
 		// Multi Column
-		$this->RecPerRow = 6;
-		$this->MultiColumnCnt = 2;
+		$this->RecPerRow = 1;
+		$this->MultiColumnCnt = 12;
 		$this->MultiColumnEditCnt = 12;
 
 		// Search filters
@@ -680,7 +680,6 @@ class cdevolucion_list extends cdevolucion {
 		$sFilterList = ew_Concat($sFilterList, $this->empleado->AdvancedSearch->ToJSON(), ","); // Field empleado
 		$sFilterList = ew_Concat($sFilterList, $this->fecha->AdvancedSearch->ToJSON(), ","); // Field fecha
 		$sFilterList = ew_Concat($sFilterList, $this->cliente->AdvancedSearch->ToJSON(), ","); // Field cliente
-		$sFilterList = ew_Concat($sFilterList, $this->empresa->AdvancedSearch->ToJSON(), ","); // Field empresa
 		if ($this->BasicSearch->Keyword <> "") {
 			$sWrk = "\"" . EW_TABLE_BASIC_SEARCH . "\":\"" . ew_JsEncode2($this->BasicSearch->Keyword) . "\",\"" . EW_TABLE_BASIC_SEARCH_TYPE . "\":\"" . ew_JsEncode2($this->BasicSearch->Type) . "\"";
 			$sFilterList = ew_Concat($sFilterList, $sWrk, ",");
@@ -730,14 +729,6 @@ class cdevolucion_list extends cdevolucion {
 		$this->cliente->AdvancedSearch->SearchValue2 = @$filter["y_cliente"];
 		$this->cliente->AdvancedSearch->SearchOperator2 = @$filter["w_cliente"];
 		$this->cliente->AdvancedSearch->Save();
-
-		// Field empresa
-		$this->empresa->AdvancedSearch->SearchValue = @$filter["x_empresa"];
-		$this->empresa->AdvancedSearch->SearchOperator = @$filter["z_empresa"];
-		$this->empresa->AdvancedSearch->SearchCondition = @$filter["v_empresa"];
-		$this->empresa->AdvancedSearch->SearchValue2 = @$filter["y_empresa"];
-		$this->empresa->AdvancedSearch->SearchOperator2 = @$filter["w_empresa"];
-		$this->empresa->AdvancedSearch->Save();
 		$this->BasicSearch->setKeyword(@$filter[EW_TABLE_BASIC_SEARCH]);
 		$this->BasicSearch->setType(@$filter[EW_TABLE_BASIC_SEARCH_TYPE]);
 	}
@@ -906,15 +897,17 @@ class cdevolucion_list extends cdevolucion {
 	// Set up sort parameters
 	function SetUpSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->id); // id
-			$this->UpdateSort($this->empleado); // empleado
-			$this->UpdateSort($this->fecha); // fecha
-			$this->UpdateSort($this->cliente); // cliente
-			$this->UpdateSort($this->empresa); // empresa
+			$this->UpdateSort($this->id, $bCtrl); // id
+			$this->UpdateSort($this->empleado, $bCtrl); // empleado
+			$this->UpdateSort($this->fecha, $bCtrl); // fecha
+			$this->UpdateSort($this->cliente, $bCtrl); // cliente
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -951,7 +944,6 @@ class cdevolucion_list extends cdevolucion {
 				$this->empleado->setSort("");
 				$this->fecha->setSort("");
 				$this->cliente->setSort("");
-				$this->empresa->setSort("");
 			}
 
 			// Reset start position
@@ -988,12 +980,6 @@ class cdevolucion_list extends cdevolucion {
 		$item->Visible = TRUE;
 		$item->OnLeft = FALSE;
 
-		// "delete"
-		$item = &$this->ListOptions->Add("delete");
-		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
-		$item->OnLeft = FALSE;
-
 		// List actions
 		$item = &$this->ListOptions->Add("listactions");
 		$item->CssStyle = "white-space: nowrap;";
@@ -1004,7 +990,7 @@ class cdevolucion_list extends cdevolucion {
 
 		// "checkbox"
 		$item = &$this->ListOptions->Add("checkbox");
-		$item->Visible = FALSE;
+		$item->Visible = TRUE;
 		$item->OnLeft = FALSE;
 		$item->Header = "<input type=\"checkbox\" name=\"key\" id=\"key\" onclick=\"ew_SelectAllKey(this);\">";
 		$item->ShowInDropDown = FALSE;
@@ -1053,13 +1039,6 @@ class cdevolucion_list extends cdevolucion {
 		} else {
 			$oListOpt->Body = "";
 		}
-
-		// "delete"
-		$oListOpt = &$this->ListOptions->Items["delete"];
-		if (TRUE)
-			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
-		else
-			$oListOpt->Body = "";
 
 		// Set up list action buttons
 		$oListOpt = &$this->ListOptions->GetItem("listactions");
@@ -1110,6 +1089,11 @@ class cdevolucion_list extends cdevolucion {
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . ew_HtmlTitle($Language->Phrase("AddLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("AddLink")) . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
 		$item->Visible = ($this->AddUrl <> "");
 		$option = $options["action"];
+
+		// Add multi delete
+		$item = &$option->Add("multidelete");
+		$item->Body = "<a class=\"ewAction ewMultiDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" href=\"\" onclick=\"ew_SubmitAction(event,{f:document.fdevolucionlist,url:'" . $this->MultiDeleteUrl . "'});return false;\">" . $Language->Phrase("DeleteSelectedLink") . "</a>";
+		$item->Visible = (TRUE);
 
 		// Set up options default
 		foreach ($options as &$option) {
@@ -1433,7 +1417,6 @@ class cdevolucion_list extends cdevolucion {
 		$this->empleado->setDbValue($rs->fields('empleado'));
 		$this->fecha->setDbValue($rs->fields('fecha'));
 		$this->cliente->setDbValue($rs->fields('cliente'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -1444,7 +1427,6 @@ class cdevolucion_list extends cdevolucion {
 		$this->empleado->DbValue = $row['empleado'];
 		$this->fecha->DbValue = $row['fecha'];
 		$this->cliente->DbValue = $row['cliente'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Load old record
@@ -1490,7 +1472,6 @@ class cdevolucion_list extends cdevolucion {
 		// empleado
 		// fecha
 		// cliente
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1509,10 +1490,6 @@ class cdevolucion_list extends cdevolucion {
 		// cliente
 		$this->cliente->ViewValue = $this->cliente->CurrentValue;
 		$this->cliente->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
 
 			// id
 			$this->id->LinkCustomAttributes = "";
@@ -1533,11 +1510,6 @@ class cdevolucion_list extends cdevolucion {
 			$this->cliente->LinkCustomAttributes = "";
 			$this->cliente->HrefValue = "";
 			$this->cliente->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1863,7 +1835,7 @@ while ($devolucion_list->RecCnt < $devolucion_list->StopRec) {
 <?php if ($devolucion->Export <> "" || $devolucion->SortUrl($devolucion->id) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $devolucion->id->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $devolucion->SortUrl($devolucion->id) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $devolucion->SortUrl($devolucion->id) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $devolucion->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($devolucion->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($devolucion->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1894,7 +1866,7 @@ while ($devolucion_list->RecCnt < $devolucion_list->StopRec) {
 <?php if ($devolucion->Export <> "" || $devolucion->SortUrl($devolucion->empleado) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $devolucion->empleado->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $devolucion->SortUrl($devolucion->empleado) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $devolucion->SortUrl($devolucion->empleado) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $devolucion->empleado->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($devolucion->empleado->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($devolucion->empleado->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1925,7 +1897,7 @@ while ($devolucion_list->RecCnt < $devolucion_list->StopRec) {
 <?php if ($devolucion->Export <> "" || $devolucion->SortUrl($devolucion->fecha) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $devolucion->fecha->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $devolucion->SortUrl($devolucion->fecha) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $devolucion->SortUrl($devolucion->fecha) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $devolucion->fecha->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($devolucion->fecha->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($devolucion->fecha->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1956,7 +1928,7 @@ while ($devolucion_list->RecCnt < $devolucion_list->StopRec) {
 <?php if ($devolucion->Export <> "" || $devolucion->SortUrl($devolucion->cliente) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $devolucion->cliente->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $devolucion->SortUrl($devolucion->cliente) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $devolucion->SortUrl($devolucion->cliente) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $devolucion->cliente->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($devolucion->cliente->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($devolucion->cliente->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1975,37 +1947,6 @@ while ($devolucion_list->RecCnt < $devolucion_list->StopRec) {
 <span id="el<?php echo $devolucion_list->RowCnt ?>_devolucion_cliente">
 <span<?php echo $devolucion->cliente->ViewAttributes() ?>>
 <?php echo $devolucion->cliente->ListViewValue() ?></span>
-</span>
-</div></div>
-		</div>
-		<?php } ?>
-	<?php } ?>
-	<?php if ($devolucion->empresa->Visible) { // empresa ?>
-		<?php if ($devolucion->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-		<tr>
-			<td class="ewTableHeader"><span class="devolucion_empresa">
-<?php if ($devolucion->Export <> "" || $devolucion->SortUrl($devolucion->empresa) == "") { ?>
-				<div class="ewTableHeaderCaption"><?php echo $devolucion->empresa->FldCaption() ?></div>
-<?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $devolucion->SortUrl($devolucion->empresa) ?>',1);">
-            	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $devolucion->empresa->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($devolucion->empresa->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($devolucion->empresa->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-				</div>
-<?php } ?>
-			</span></td>
-			<td<?php echo $devolucion->empresa->CellAttributes() ?>>
-<span id="el<?php echo $devolucion_list->RowCnt ?>_devolucion_empresa">
-<span<?php echo $devolucion->empresa->ViewAttributes() ?>>
-<?php echo $devolucion->empresa->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-		<?php } else { // Add/edit record ?>
-		<div class="form-group devolucion_empresa">
-			<label class="col-sm-2 control-label ewLabel"><?php echo $devolucion->empresa->FldCaption() ?></label>
-			<div class="col-sm-10"><div<?php echo $devolucion->empresa->CellAttributes() ?>>
-<span id="el<?php echo $devolucion_list->RowCnt ?>_devolucion_empresa">
-<span<?php echo $devolucion->empresa->ViewAttributes() ?>>
-<?php echo $devolucion->empresa->ListViewValue() ?></span>
 </span>
 </div></div>
 		</div>
@@ -2094,8 +2035,8 @@ if ($devolucion_list->Recordset)
 <div class="ewPager">
 <input type="hidden" name="t" value="devolucion">
 <select name="<?php echo EW_TABLE_REC_PER_PAGE ?>" class="form-control input-sm" onchange="this.form.submit();">
+<option value="10"<?php if ($devolucion_list->DisplayRecs == 10) { ?> selected<?php } ?>>10</option>
 <option value="20"<?php if ($devolucion_list->DisplayRecs == 20) { ?> selected<?php } ?>>20</option>
-<option value="ALL"<?php if ($devolucion->getRecordsPerPage() == -1) { ?> selected<?php } ?>><?php echo $Language->Phrase("AllRecords") ?></option>
 </select>
 </div>
 <?php } ?>

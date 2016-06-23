@@ -5,7 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg12.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql12.php") ?>
 <?php include_once "phpfn12.php" ?>
-<?php include_once "libroinfo.php" ?>
+<?php include_once "inicioinfo.php" ?>
 <?php include_once "userfn12.php" ?>
 <?php
 
@@ -13,9 +13,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$libro_add = NULL; // Initialize page object first
+$inicio_add = NULL; // Initialize page object first
 
-class clibro_add extends clibro {
+class cinicio_add extends cinicio {
 
 	// Page ID
 	var $PageID = 'add';
@@ -24,10 +24,10 @@ class clibro_add extends clibro {
 	var $ProjectID = "{2604CCF7-311F-415E-9E95-9937AECA0470}";
 
 	// Table name
-	var $TableName = 'libro';
+	var $TableName = 'inicio';
 
 	// Page object name
-	var $PageObjName = 'libro_add';
+	var $PageObjName = 'inicio_add';
 
 	// Page name
 	function PageName() {
@@ -220,10 +220,10 @@ class clibro_add extends clibro {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (libro)
-		if (!isset($GLOBALS["libro"]) || get_class($GLOBALS["libro"]) == "clibro") {
-			$GLOBALS["libro"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["libro"];
+		// Table object (inicio)
+		if (!isset($GLOBALS["inicio"]) || get_class($GLOBALS["inicio"]) == "cinicio") {
+			$GLOBALS["inicio"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["inicio"];
 		}
 
 		// Page ID
@@ -232,7 +232,7 @@ class clibro_add extends clibro {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 'libro', TRUE);
+			define("EW_TABLE_NAME", 'inicio', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -295,13 +295,13 @@ class clibro_add extends clibro {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $libro;
+		global $EW_EXPORT, $inicio;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($libro);
+				$doc = new $class($inicio);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -384,7 +384,7 @@ class clibro_add extends clibro {
 			case "C": // Copy an existing record
 				if (!$this->LoadRow()) { // Load record based on key
 					if ($this->getFailureMessage() == "") $this->setFailureMessage($Language->Phrase("NoRecord")); // No record found
-					$this->Page_Terminate("librolist.php"); // No matching record, return to list
+					$this->Page_Terminate("iniciolist.php"); // No matching record, return to list
 				}
 				break;
 			case "A": // Add new record
@@ -393,9 +393,9 @@ class clibro_add extends clibro {
 					if ($this->getSuccessMessage() == "")
 						$this->setSuccessMessage($Language->Phrase("AddSuccess")); // Set up success message
 					$sReturnUrl = $this->getReturnUrl();
-					if (ew_GetPageName($sReturnUrl) == "librolist.php")
+					if (ew_GetPageName($sReturnUrl) == "iniciolist.php")
 						$sReturnUrl = $this->AddMasterUrl($sReturnUrl); // List page, return to list page with correct master key if necessary
-					elseif (ew_GetPageName($sReturnUrl) == "libroview.php")
+					elseif (ew_GetPageName($sReturnUrl) == "inicioview.php")
 						$sReturnUrl = $this->GetViewUrl(); // View page, return to view page with keyurl directly
 					$this->Page_Terminate($sReturnUrl); // Clean up and return
 				} else {
@@ -421,14 +421,6 @@ class clibro_add extends clibro {
 
 	// Load default values
 	function LoadDefaultValues() {
-		$this->autor->CurrentValue = NULL;
-		$this->autor->OldValue = $this->autor->CurrentValue;
-		$this->titulo->CurrentValue = NULL;
-		$this->titulo->OldValue = $this->titulo->CurrentValue;
-		$this->aF1o->CurrentValue = NULL;
-		$this->aF1o->OldValue = $this->aF1o->CurrentValue;
-		$this->cantidad->CurrentValue = NULL;
-		$this->cantidad->OldValue = $this->cantidad->CurrentValue;
 	}
 
 	// Load form values
@@ -436,28 +428,12 @@ class clibro_add extends clibro {
 
 		// Load from form
 		global $objForm;
-		if (!$this->autor->FldIsDetailKey) {
-			$this->autor->setFormValue($objForm->GetValue("x_autor"));
-		}
-		if (!$this->titulo->FldIsDetailKey) {
-			$this->titulo->setFormValue($objForm->GetValue("x_titulo"));
-		}
-		if (!$this->aF1o->FldIsDetailKey) {
-			$this->aF1o->setFormValue($objForm->GetValue("x_aF1o"));
-		}
-		if (!$this->cantidad->FldIsDetailKey) {
-			$this->cantidad->setFormValue($objForm->GetValue("x_cantidad"));
-		}
 	}
 
 	// Restore form values
 	function RestoreFormValues() {
 		global $objForm;
 		$this->LoadOldRecord();
-		$this->autor->CurrentValue = $this->autor->FormValue;
-		$this->titulo->CurrentValue = $this->titulo->FormValue;
-		$this->aF1o->CurrentValue = $this->aF1o->FormValue;
-		$this->cantidad->CurrentValue = $this->cantidad->FormValue;
 	}
 
 	// Load row based on key values
@@ -490,10 +466,6 @@ class clibro_add extends clibro {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->autor->setDbValue($rs->fields('autor'));
-		$this->titulo->setDbValue($rs->fields('titulo'));
-		$this->aF1o->setDbValue($rs->fields('año'));
-		$this->cantidad->setDbValue($rs->fields('cantidad'));
 	}
 
 	// Load DbValue from recordset
@@ -501,10 +473,6 @@ class clibro_add extends clibro {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->autor->DbValue = $row['autor'];
-		$this->titulo->DbValue = $row['titulo'];
-		$this->aF1o->DbValue = $row['año'];
-		$this->cantidad->DbValue = $row['cantidad'];
 	}
 
 	// Load old record
@@ -541,95 +509,15 @@ class clibro_add extends clibro {
 
 		// Common render codes for all row types
 		// id
-		// autor
-		// titulo
-		// año
-		// cantidad
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
 		// id
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
-
-		// autor
-		$this->autor->ViewValue = $this->autor->CurrentValue;
-		$this->autor->ViewCustomAttributes = "";
-
-		// titulo
-		$this->titulo->ViewValue = $this->titulo->CurrentValue;
-		$this->titulo->ViewCustomAttributes = "";
-
-		// año
-		$this->aF1o->ViewValue = $this->aF1o->CurrentValue;
-		$this->aF1o->ViewCustomAttributes = "";
-
-		// cantidad
-		$this->cantidad->ViewValue = $this->cantidad->CurrentValue;
-		$this->cantidad->ViewCustomAttributes = "";
-
-			// autor
-			$this->autor->LinkCustomAttributes = "";
-			$this->autor->HrefValue = "";
-			$this->autor->TooltipValue = "";
-
-			// titulo
-			$this->titulo->LinkCustomAttributes = "";
-			$this->titulo->HrefValue = "";
-			$this->titulo->TooltipValue = "";
-
-			// año
-			$this->aF1o->LinkCustomAttributes = "";
-			$this->aF1o->HrefValue = "";
-			$this->aF1o->TooltipValue = "";
-
-			// cantidad
-			$this->cantidad->LinkCustomAttributes = "";
-			$this->cantidad->HrefValue = "";
-			$this->cantidad->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
-			// autor
-			$this->autor->EditAttrs["class"] = "form-control";
-			$this->autor->EditCustomAttributes = "";
-			$this->autor->EditValue = ew_HtmlEncode($this->autor->CurrentValue);
-			$this->autor->PlaceHolder = ew_RemoveHtml($this->autor->FldCaption());
-
-			// titulo
-			$this->titulo->EditAttrs["class"] = "form-control";
-			$this->titulo->EditCustomAttributes = "";
-			$this->titulo->EditValue = ew_HtmlEncode($this->titulo->CurrentValue);
-			$this->titulo->PlaceHolder = ew_RemoveHtml($this->titulo->FldCaption());
-
-			// año
-			$this->aF1o->EditAttrs["class"] = "form-control";
-			$this->aF1o->EditCustomAttributes = "";
-			$this->aF1o->EditValue = ew_HtmlEncode($this->aF1o->CurrentValue);
-			$this->aF1o->PlaceHolder = ew_RemoveHtml($this->aF1o->FldCaption());
-
-			// cantidad
-			$this->cantidad->EditAttrs["class"] = "form-control";
-			$this->cantidad->EditCustomAttributes = "";
-			$this->cantidad->EditValue = ew_HtmlEncode($this->cantidad->CurrentValue);
-			$this->cantidad->PlaceHolder = ew_RemoveHtml($this->cantidad->FldCaption());
-
 			// Add refer script
-			// autor
-
-			$this->autor->LinkCustomAttributes = "";
-			$this->autor->HrefValue = "";
-
-			// titulo
-			$this->titulo->LinkCustomAttributes = "";
-			$this->titulo->HrefValue = "";
-
-			// año
-			$this->aF1o->LinkCustomAttributes = "";
-			$this->aF1o->HrefValue = "";
-
-			// cantidad
-			$this->cantidad->LinkCustomAttributes = "";
-			$this->cantidad->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -652,21 +540,6 @@ class clibro_add extends clibro {
 		// Check if validation required
 		if (!EW_SERVER_VALIDATE)
 			return ($gsFormError == "");
-		if (!$this->autor->FldIsDetailKey && !is_null($this->autor->FormValue) && $this->autor->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->autor->FldCaption(), $this->autor->ReqErrMsg));
-		}
-		if (!$this->titulo->FldIsDetailKey && !is_null($this->titulo->FormValue) && $this->titulo->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->titulo->FldCaption(), $this->titulo->ReqErrMsg));
-		}
-		if (!$this->aF1o->FldIsDetailKey && !is_null($this->aF1o->FormValue) && $this->aF1o->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->aF1o->FldCaption(), $this->aF1o->ReqErrMsg));
-		}
-		if (!$this->cantidad->FldIsDetailKey && !is_null($this->cantidad->FormValue) && $this->cantidad->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->cantidad->FldCaption(), $this->cantidad->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->cantidad->FormValue)) {
-			ew_AddMessage($gsFormError, $this->cantidad->FldErrMsg());
-		}
 
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
@@ -690,18 +563,6 @@ class clibro_add extends clibro {
 			$this->LoadDbValues($rsold);
 		}
 		$rsnew = array();
-
-		// autor
-		$this->autor->SetDbValueDef($rsnew, $this->autor->CurrentValue, "", FALSE);
-
-		// titulo
-		$this->titulo->SetDbValueDef($rsnew, $this->titulo->CurrentValue, "", FALSE);
-
-		// año
-		$this->aF1o->SetDbValueDef($rsnew, $this->aF1o->CurrentValue, "", FALSE);
-
-		// cantidad
-		$this->cantidad->SetDbValueDef($rsnew, $this->cantidad->CurrentValue, 0, FALSE);
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -742,7 +603,7 @@ class clibro_add extends clibro {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("librolist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("iniciolist.php"), "", $this->TableVar, TRUE);
 		$PageId = ($this->CurrentAction == "C") ? "Copy" : "Add";
 		$Breadcrumb->Add("add", $PageId, $url);
 	}
@@ -819,29 +680,29 @@ class clibro_add extends clibro {
 <?php
 
 // Create page object
-if (!isset($libro_add)) $libro_add = new clibro_add();
+if (!isset($inicio_add)) $inicio_add = new cinicio_add();
 
 // Page init
-$libro_add->Page_Init();
+$inicio_add->Page_Init();
 
 // Page main
-$libro_add->Page_Main();
+$inicio_add->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$libro_add->Page_Render();
+$inicio_add->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "add";
-var CurrentForm = flibroadd = new ew_Form("flibroadd", "add");
+var CurrentForm = finicioadd = new ew_Form("finicioadd", "add");
 
 // Validate form
-flibroadd.Validate = function() {
+finicioadd.Validate = function() {
 	if (!this.ValidateRequired)
 		return true; // Ignore validation
 	var $ = jQuery, fobj = this.GetForm(), $fobj = $(fobj);
@@ -855,21 +716,6 @@ flibroadd.Validate = function() {
 	for (var i = startcnt; i <= rowcnt; i++) {
 		var infix = ($k[0]) ? String(i) : "";
 		$fobj.data("rowindex", infix);
-			elm = this.GetElements("x" + infix + "_autor");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $libro->autor->FldCaption(), $libro->autor->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_titulo");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $libro->titulo->FldCaption(), $libro->titulo->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_aF1o");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $libro->aF1o->FldCaption(), $libro->aF1o->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_cantidad");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $libro->cantidad->FldCaption(), $libro->cantidad->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_cantidad");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($libro->cantidad->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -888,7 +734,7 @@ flibroadd.Validate = function() {
 }
 
 // Form_CustomValidate event
-flibroadd.Form_CustomValidate = 
+finicioadd.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -897,9 +743,9 @@ flibroadd.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-flibroadd.ValidateRequired = true;
+finicioadd.ValidateRequired = true;
 <?php } else { ?>
-flibroadd.ValidateRequired = false; 
+finicioadd.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
@@ -915,70 +761,30 @@ flibroadd.ValidateRequired = false;
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
-<?php $libro_add->ShowPageHeader(); ?>
+<?php $inicio_add->ShowPageHeader(); ?>
 <?php
-$libro_add->ShowMessage();
+$inicio_add->ShowMessage();
 ?>
-<form name="flibroadd" id="flibroadd" class="<?php echo $libro_add->FormClassName ?>" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($libro_add->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $libro_add->Token ?>">
+<form name="finicioadd" id="finicioadd" class="<?php echo $inicio_add->FormClassName ?>" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($inicio_add->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $inicio_add->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="libro">
+<input type="hidden" name="t" value="inicio">
 <input type="hidden" name="a_add" id="a_add" value="A">
 <div>
-<?php if ($libro->autor->Visible) { // autor ?>
-	<div id="r_autor" class="form-group">
-		<label id="elh_libro_autor" for="x_autor" class="col-sm-2 control-label ewLabel"><?php echo $libro->autor->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $libro->autor->CellAttributes() ?>>
-<span id="el_libro_autor">
-<input type="text" data-table="libro" data-field="x_autor" name="x_autor" id="x_autor" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($libro->autor->getPlaceHolder()) ?>" value="<?php echo $libro->autor->EditValue ?>"<?php echo $libro->autor->EditAttributes() ?>>
-</span>
-<?php echo $libro->autor->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($libro->titulo->Visible) { // titulo ?>
-	<div id="r_titulo" class="form-group">
-		<label id="elh_libro_titulo" for="x_titulo" class="col-sm-2 control-label ewLabel"><?php echo $libro->titulo->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $libro->titulo->CellAttributes() ?>>
-<span id="el_libro_titulo">
-<input type="text" data-table="libro" data-field="x_titulo" name="x_titulo" id="x_titulo" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($libro->titulo->getPlaceHolder()) ?>" value="<?php echo $libro->titulo->EditValue ?>"<?php echo $libro->titulo->EditAttributes() ?>>
-</span>
-<?php echo $libro->titulo->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($libro->aF1o->Visible) { // año ?>
-	<div id="r_aF1o" class="form-group">
-		<label id="elh_libro_aF1o" for="x_aF1o" class="col-sm-2 control-label ewLabel"><?php echo $libro->aF1o->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $libro->aF1o->CellAttributes() ?>>
-<span id="el_libro_aF1o">
-<input type="text" data-table="libro" data-field="x_aF1o" name="x_aF1o" id="x_aF1o" size="30" maxlength="4" placeholder="<?php echo ew_HtmlEncode($libro->aF1o->getPlaceHolder()) ?>" value="<?php echo $libro->aF1o->EditValue ?>"<?php echo $libro->aF1o->EditAttributes() ?>>
-</span>
-<?php echo $libro->aF1o->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($libro->cantidad->Visible) { // cantidad ?>
-	<div id="r_cantidad" class="form-group">
-		<label id="elh_libro_cantidad" for="x_cantidad" class="col-sm-2 control-label ewLabel"><?php echo $libro->cantidad->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $libro->cantidad->CellAttributes() ?>>
-<span id="el_libro_cantidad">
-<input type="text" data-table="libro" data-field="x_cantidad" name="x_cantidad" id="x_cantidad" size="30" placeholder="<?php echo ew_HtmlEncode($libro->cantidad->getPlaceHolder()) ?>" value="<?php echo $libro->cantidad->EditValue ?>"<?php echo $libro->cantidad->EditAttributes() ?>>
-</span>
-<?php echo $libro->cantidad->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
 </div>
 <div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">
 <button class="btn btn-primary ewButton" name="btnAction" id="btnAction" type="submit"><?php echo $Language->Phrase("AddBtn") ?></button>
-<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $libro_add->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
+<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $inicio_add->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 	</div>
 </div>
 </form>
 <script type="text/javascript">
-flibroadd.Init();
+finicioadd.Init();
 </script>
 <?php
-$libro_add->ShowPageFooter();
+$inicio_add->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -990,5 +796,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$libro_add->Page_Terminate();
+$inicio_add->Page_Terminate();
 ?>

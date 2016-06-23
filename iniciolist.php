@@ -5,7 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg12.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql12.php") ?>
 <?php include_once "phpfn12.php" ?>
-<?php include_once "detalleinfo.php" ?>
+<?php include_once "inicioinfo.php" ?>
 <?php include_once "userfn12.php" ?>
 <?php
 
@@ -13,9 +13,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$detalle_list = NULL; // Initialize page object first
+$inicio_list = NULL; // Initialize page object first
 
-class cdetalle_list extends cdetalle {
+class cinicio_list extends cinicio {
 
 	// Page ID
 	var $PageID = 'list';
@@ -24,13 +24,13 @@ class cdetalle_list extends cdetalle {
 	var $ProjectID = "{2604CCF7-311F-415E-9E95-9937AECA0470}";
 
 	// Table name
-	var $TableName = 'detalle';
+	var $TableName = 'inicio';
 
 	// Page object name
-	var $PageObjName = 'detalle_list';
+	var $PageObjName = 'inicio_list';
 
 	// Grid form hidden field names
-	var $FormName = 'fdetallelist';
+	var $FormName = 'finiciolist';
 	var $FormActionName = 'k_action';
 	var $FormKeyName = 'k_key';
 	var $FormOldKeyName = 'k_oldkey';
@@ -260,10 +260,10 @@ class cdetalle_list extends cdetalle {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (detalle)
-		if (!isset($GLOBALS["detalle"]) || get_class($GLOBALS["detalle"]) == "cdetalle") {
-			$GLOBALS["detalle"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["detalle"];
+		// Table object (inicio)
+		if (!isset($GLOBALS["inicio"]) || get_class($GLOBALS["inicio"]) == "cinicio") {
+			$GLOBALS["inicio"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["inicio"];
 		}
 
 		// Initialize URLs
@@ -274,12 +274,12 @@ class cdetalle_list extends cdetalle {
 		$this->ExportXmlUrl = $this->PageUrl() . "export=xml";
 		$this->ExportCsvUrl = $this->PageUrl() . "export=csv";
 		$this->ExportPdfUrl = $this->PageUrl() . "export=pdf";
-		$this->AddUrl = "detalleadd.php";
+		$this->AddUrl = "inicioadd.php";
 		$this->InlineAddUrl = $this->PageUrl() . "a=add";
 		$this->GridAddUrl = $this->PageUrl() . "a=gridadd";
 		$this->GridEditUrl = $this->PageUrl() . "a=gridedit";
-		$this->MultiDeleteUrl = "detalledelete.php";
-		$this->MultiUpdateUrl = "detalleupdate.php";
+		$this->MultiDeleteUrl = "iniciodelete.php";
+		$this->MultiUpdateUrl = "inicioupdate.php";
 
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
@@ -287,7 +287,7 @@ class cdetalle_list extends cdetalle {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 'detalle', TRUE);
+			define("EW_TABLE_NAME", 'inicio', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -318,7 +318,7 @@ class cdetalle_list extends cdetalle {
 		// Filter options
 		$this->FilterOptions = new cListOptions();
 		$this->FilterOptions->Tag = "div";
-		$this->FilterOptions->TagClassName = "ewFilterOption fdetallelistsrch";
+		$this->FilterOptions->TagClassName = "ewFilterOption finiciolistsrch";
 
 		// List actions
 		$this->ListActions = new cListActions();
@@ -399,13 +399,13 @@ class cdetalle_list extends cdetalle {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $detalle;
+		global $EW_EXPORT, $inicio;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($detalle);
+				$doc = new $class($inicio);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -637,8 +637,6 @@ class cdetalle_list extends cdetalle {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
 			$this->UpdateSort($this->id, $bCtrl); // id
-			$this->UpdateSort($this->pedido, $bCtrl); // pedido
-			$this->UpdateSort($this->libro, $bCtrl); // libro
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -668,8 +666,6 @@ class cdetalle_list extends cdetalle {
 				$sOrderBy = "";
 				$this->setSessionOrderBy($sOrderBy);
 				$this->id->setSort("");
-				$this->pedido->setSort("");
-				$this->libro->setSort("");
 			}
 
 			// Reset start position
@@ -818,7 +814,7 @@ class cdetalle_list extends cdetalle {
 
 		// Add multi delete
 		$item = &$option->Add("multidelete");
-		$item->Body = "<a class=\"ewAction ewMultiDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" href=\"\" onclick=\"ew_SubmitAction(event,{f:document.fdetallelist,url:'" . $this->MultiDeleteUrl . "'});return false;\">" . $Language->Phrase("DeleteSelectedLink") . "</a>";
+		$item->Body = "<a class=\"ewAction ewMultiDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" href=\"\" onclick=\"ew_SubmitAction(event,{f:document.finiciolist,url:'" . $this->MultiDeleteUrl . "'});return false;\">" . $Language->Phrase("DeleteSelectedLink") . "</a>";
 		$item->Visible = (TRUE);
 
 		// Set up options default
@@ -837,10 +833,10 @@ class cdetalle_list extends cdetalle {
 
 		// Filter button
 		$item = &$this->FilterOptions->Add("savecurrentfilter");
-		$item->Body = "<a class=\"ewSaveFilter\" data-form=\"fdetallelistsrch\" href=\"#\">" . $Language->Phrase("SaveCurrentFilter") . "</a>";
+		$item->Body = "<a class=\"ewSaveFilter\" data-form=\"finiciolistsrch\" href=\"#\">" . $Language->Phrase("SaveCurrentFilter") . "</a>";
 		$item->Visible = FALSE;
 		$item = &$this->FilterOptions->Add("deletefilter");
-		$item->Body = "<a class=\"ewDeleteFilter\" data-form=\"fdetallelistsrch\" href=\"#\">" . $Language->Phrase("DeleteFilter") . "</a>";
+		$item->Body = "<a class=\"ewDeleteFilter\" data-form=\"finiciolistsrch\" href=\"#\">" . $Language->Phrase("DeleteFilter") . "</a>";
 		$item->Visible = FALSE;
 		$this->FilterOptions->UseDropDownButton = TRUE;
 		$this->FilterOptions->UseButtonGroup = !$this->FilterOptions->UseDropDownButton;
@@ -864,7 +860,7 @@ class cdetalle_list extends cdetalle {
 					$item = &$option->Add("custom_" . $listaction->Action);
 					$caption = $listaction->Caption;
 					$icon = ($listaction->Icon <> "") ? "<span class=\"" . ew_HtmlEncode($listaction->Icon) . "\" data-caption=\"" . ew_HtmlEncode($caption) . "\"></span> " : $caption;
-					$item->Body = "<a class=\"ewAction ewListAction\" title=\"" . ew_HtmlEncode($caption) . "\" data-caption=\"" . ew_HtmlEncode($caption) . "\" href=\"\" onclick=\"ew_SubmitAction(event,jQuery.extend({f:document.fdetallelist}," . $listaction->ToJson(TRUE) . "));return false;\">" . $icon . "</a>";
+					$item->Body = "<a class=\"ewAction ewListAction\" title=\"" . ew_HtmlEncode($caption) . "\" data-caption=\"" . ew_HtmlEncode($caption) . "\" href=\"\" onclick=\"ew_SubmitAction(event,jQuery.extend({f:document.finiciolist}," . $listaction->ToJson(TRUE) . "));return false;\">" . $icon . "</a>";
 					$item->Visible = $listaction->Allow;
 				}
 			}
@@ -1122,8 +1118,6 @@ class cdetalle_list extends cdetalle {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->pedido->setDbValue($rs->fields('pedido'));
-		$this->libro->setDbValue($rs->fields('libro'));
 	}
 
 	// Load DbValue from recordset
@@ -1131,8 +1125,6 @@ class cdetalle_list extends cdetalle {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->pedido->DbValue = $row['pedido'];
-		$this->libro->DbValue = $row['libro'];
 	}
 
 	// Load old record
@@ -1175,8 +1167,6 @@ class cdetalle_list extends cdetalle {
 
 		// Common render codes for all row types
 		// id
-		// pedido
-		// libro
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1184,28 +1174,10 @@ class cdetalle_list extends cdetalle {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// pedido
-		$this->pedido->ViewValue = $this->pedido->CurrentValue;
-		$this->pedido->ViewCustomAttributes = "";
-
-		// libro
-		$this->libro->ViewValue = $this->libro->CurrentValue;
-		$this->libro->ViewCustomAttributes = "";
-
 			// id
 			$this->id->LinkCustomAttributes = "";
 			$this->id->HrefValue = "";
 			$this->id->TooltipValue = "";
-
-			// pedido
-			$this->pedido->LinkCustomAttributes = "";
-			$this->pedido->HrefValue = "";
-			$this->pedido->TooltipValue = "";
-
-			// libro
-			$this->libro->LinkCustomAttributes = "";
-			$this->libro->HrefValue = "";
-			$this->libro->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1346,30 +1318,30 @@ class cdetalle_list extends cdetalle {
 <?php
 
 // Create page object
-if (!isset($detalle_list)) $detalle_list = new cdetalle_list();
+if (!isset($inicio_list)) $inicio_list = new cinicio_list();
 
 // Page init
-$detalle_list->Page_Init();
+$inicio_list->Page_Init();
 
 // Page main
-$detalle_list->Page_Main();
+$inicio_list->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$detalle_list->Page_Render();
+$inicio_list->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "list";
-var CurrentForm = fdetallelist = new ew_Form("fdetallelist", "list");
-fdetallelist.FormKeyCountName = '<?php echo $detalle_list->FormKeyCountName ?>';
+var CurrentForm = finiciolist = new ew_Form("finiciolist", "list");
+finiciolist.FormKeyCountName = '<?php echo $inicio_list->FormKeyCountName ?>';
 
 // Form_CustomValidate event
-fdetallelist.Form_CustomValidate = 
+finiciolist.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -1378,9 +1350,9 @@ fdetallelist.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-fdetallelist.ValidateRequired = true;
+finiciolist.ValidateRequired = true;
 <?php } else { ?>
-fdetallelist.ValidateRequired = false; 
+finiciolist.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
@@ -1393,197 +1365,135 @@ fdetallelist.ValidateRequired = false;
 </script>
 <div class="ewToolbar">
 <?php $Breadcrumb->Render(); ?>
-<?php if ($detalle_list->TotalRecs > 0 && $detalle_list->ExportOptions->Visible()) { ?>
-<?php $detalle_list->ExportOptions->Render("body") ?>
+<?php if ($inicio_list->TotalRecs > 0 && $inicio_list->ExportOptions->Visible()) { ?>
+<?php $inicio_list->ExportOptions->Render("body") ?>
 <?php } ?>
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
 <?php
-	$bSelectLimit = $detalle_list->UseSelectLimit;
+	$bSelectLimit = $inicio_list->UseSelectLimit;
 	if ($bSelectLimit) {
-		if ($detalle_list->TotalRecs <= 0)
-			$detalle_list->TotalRecs = $detalle->SelectRecordCount();
+		if ($inicio_list->TotalRecs <= 0)
+			$inicio_list->TotalRecs = $inicio->SelectRecordCount();
 	} else {
-		if (!$detalle_list->Recordset && ($detalle_list->Recordset = $detalle_list->LoadRecordset()))
-			$detalle_list->TotalRecs = $detalle_list->Recordset->RecordCount();
+		if (!$inicio_list->Recordset && ($inicio_list->Recordset = $inicio_list->LoadRecordset()))
+			$inicio_list->TotalRecs = $inicio_list->Recordset->RecordCount();
 	}
-	$detalle_list->StartRec = 1;
-	if ($detalle_list->DisplayRecs <= 0 || ($detalle->Export <> "" && $detalle->ExportAll)) // Display all records
-		$detalle_list->DisplayRecs = $detalle_list->TotalRecs;
-	if (!($detalle->Export <> "" && $detalle->ExportAll))
-		$detalle_list->SetUpStartRec(); // Set up start record position
+	$inicio_list->StartRec = 1;
+	if ($inicio_list->DisplayRecs <= 0 || ($inicio->Export <> "" && $inicio->ExportAll)) // Display all records
+		$inicio_list->DisplayRecs = $inicio_list->TotalRecs;
+	if (!($inicio->Export <> "" && $inicio->ExportAll))
+		$inicio_list->SetUpStartRec(); // Set up start record position
 	if ($bSelectLimit)
-		$detalle_list->Recordset = $detalle_list->LoadRecordset($detalle_list->StartRec-1, $detalle_list->DisplayRecs);
+		$inicio_list->Recordset = $inicio_list->LoadRecordset($inicio_list->StartRec-1, $inicio_list->DisplayRecs);
 
 	// Set no record found message
-	if ($detalle->CurrentAction == "" && $detalle_list->TotalRecs == 0) {
-		if ($detalle_list->SearchWhere == "0=101")
-			$detalle_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
+	if ($inicio->CurrentAction == "" && $inicio_list->TotalRecs == 0) {
+		if ($inicio_list->SearchWhere == "0=101")
+			$inicio_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else
-			$detalle_list->setWarningMessage($Language->Phrase("NoRecord"));
+			$inicio_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
-$detalle_list->RenderOtherOptions();
+$inicio_list->RenderOtherOptions();
 ?>
-<?php $detalle_list->ShowPageHeader(); ?>
+<?php $inicio_list->ShowPageHeader(); ?>
 <?php
-$detalle_list->ShowMessage();
+$inicio_list->ShowMessage();
 ?>
-<?php if ($detalle_list->TotalRecs > 0 || $detalle->CurrentAction <> "") { ?>
+<?php if ($inicio_list->TotalRecs > 0 || $inicio->CurrentAction <> "") { ?>
 <div class="ewMultiColumnGrid">
-<form name="fdetallelist" id="fdetallelist" class="form-horizontal ewForm ewListForm ewMultiColumnForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($detalle_list->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $detalle_list->Token ?>">
+<form name="finiciolist" id="finiciolist" class="form-horizontal ewForm ewListForm ewMultiColumnForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($inicio_list->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $inicio_list->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="detalle">
-<?php if ($detalle_list->TotalRecs > 0) { ?>
+<input type="hidden" name="t" value="inicio">
+<?php if ($inicio_list->TotalRecs > 0) { ?>
 <?php
-if ($detalle->ExportAll && $detalle->Export <> "") {
-	$detalle_list->StopRec = $detalle_list->TotalRecs;
+if ($inicio->ExportAll && $inicio->Export <> "") {
+	$inicio_list->StopRec = $inicio_list->TotalRecs;
 } else {
 
 	// Set the last record to display
-	if ($detalle_list->TotalRecs > $detalle_list->StartRec + $detalle_list->DisplayRecs - 1)
-		$detalle_list->StopRec = $detalle_list->StartRec + $detalle_list->DisplayRecs - 1;
+	if ($inicio_list->TotalRecs > $inicio_list->StartRec + $inicio_list->DisplayRecs - 1)
+		$inicio_list->StopRec = $inicio_list->StartRec + $inicio_list->DisplayRecs - 1;
 	else
-		$detalle_list->StopRec = $detalle_list->TotalRecs;
+		$inicio_list->StopRec = $inicio_list->TotalRecs;
 }
-$detalle_list->RecCnt = $detalle_list->StartRec - 1;
-if ($detalle_list->Recordset && !$detalle_list->Recordset->EOF) {
-	$detalle_list->Recordset->MoveFirst();
-	$bSelectLimit = $detalle_list->UseSelectLimit;
-	if (!$bSelectLimit && $detalle_list->StartRec > 1)
-		$detalle_list->Recordset->Move($detalle_list->StartRec - 1);
-} elseif (!$detalle->AllowAddDeleteRow && $detalle_list->StopRec == 0) {
-	$detalle_list->StopRec = $detalle->GridAddRowCount;
+$inicio_list->RecCnt = $inicio_list->StartRec - 1;
+if ($inicio_list->Recordset && !$inicio_list->Recordset->EOF) {
+	$inicio_list->Recordset->MoveFirst();
+	$bSelectLimit = $inicio_list->UseSelectLimit;
+	if (!$bSelectLimit && $inicio_list->StartRec > 1)
+		$inicio_list->Recordset->Move($inicio_list->StartRec - 1);
+} elseif (!$inicio->AllowAddDeleteRow && $inicio_list->StopRec == 0) {
+	$inicio_list->StopRec = $inicio->GridAddRowCount;
 }
-while ($detalle_list->RecCnt < $detalle_list->StopRec) {
-	$detalle_list->RecCnt++;
-	if (intval($detalle_list->RecCnt) >= intval($detalle_list->StartRec)) {
-		$detalle_list->RowCnt++;
+while ($inicio_list->RecCnt < $inicio_list->StopRec) {
+	$inicio_list->RecCnt++;
+	if (intval($inicio_list->RecCnt) >= intval($inicio_list->StartRec)) {
+		$inicio_list->RowCnt++;
 
 		// Set up key count
-		$detalle_list->KeyCount = $detalle_list->RowIndex;
+		$inicio_list->KeyCount = $inicio_list->RowIndex;
 
 		// Init row class and style
-		$detalle->ResetAttrs();
-		$detalle->CssClass = "";
-		if ($detalle->CurrentAction == "gridadd") {
+		$inicio->ResetAttrs();
+		$inicio->CssClass = "";
+		if ($inicio->CurrentAction == "gridadd") {
 		} else {
-			$detalle_list->LoadRowValues($detalle_list->Recordset); // Load row values
+			$inicio_list->LoadRowValues($inicio_list->Recordset); // Load row values
 		}
-		$detalle->RowType = EW_ROWTYPE_VIEW; // Render view
+		$inicio->RowType = EW_ROWTYPE_VIEW; // Render view
 
 		// Set up row id / data-rowindex
-		$detalle->RowAttrs = array_merge($detalle->RowAttrs, array('data-rowindex'=>$detalle_list->RowCnt, 'id'=>'r' . $detalle_list->RowCnt . '_detalle', 'data-rowtype'=>$detalle->RowType));
+		$inicio->RowAttrs = array_merge($inicio->RowAttrs, array('data-rowindex'=>$inicio_list->RowCnt, 'id'=>'r' . $inicio_list->RowCnt . '_inicio', 'data-rowtype'=>$inicio->RowType));
 
 		// Render row
-		$detalle_list->RenderRow();
+		$inicio_list->RenderRow();
 
 		// Render list options
-		$detalle_list->RenderListOptions();
+		$inicio_list->RenderListOptions();
 ?>
-<?php echo $detalle_list->MultiColumnBeginGrid() ?>
-<div class="<?php echo $detalle_list->MultiColumnClass ?>"<?php echo $detalle->RowAttributes() ?>>
-	<?php if ($detalle->RowType == EW_ROWTYPE_VIEW) { // View record ?>
+<?php echo $inicio_list->MultiColumnBeginGrid() ?>
+<div class="<?php echo $inicio_list->MultiColumnClass ?>"<?php echo $inicio->RowAttributes() ?>>
+	<?php if ($inicio->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 	<table class="table table-bordered table-striped">
 	<?php } else { // Add/edit record ?>
 	<div>
 	<?php } ?>
-	<?php if ($detalle->id->Visible) { // id ?>
-		<?php if ($detalle->RowType == EW_ROWTYPE_VIEW) { // View record ?>
+	<?php if ($inicio->id->Visible) { // id ?>
+		<?php if ($inicio->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 		<tr>
-			<td class="ewTableHeader"><span class="detalle_id">
-<?php if ($detalle->Export <> "" || $detalle->SortUrl($detalle->id) == "") { ?>
-				<div class="ewTableHeaderCaption"><?php echo $detalle->id->FldCaption() ?></div>
+			<td class="ewTableHeader"><span class="inicio_id">
+<?php if ($inicio->Export <> "" || $inicio->SortUrl($inicio->id) == "") { ?>
+				<div class="ewTableHeaderCaption"><?php echo $inicio->id->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $detalle->SortUrl($detalle->id) ?>',2);">
-            	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $detalle->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($detalle->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($detalle->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $inicio->SortUrl($inicio->id) ?>',2);">
+            	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $inicio->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($inicio->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($inicio->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
 			</span></td>
-			<td<?php echo $detalle->id->CellAttributes() ?>>
-<span id="el<?php echo $detalle_list->RowCnt ?>_detalle_id">
-<span<?php echo $detalle->id->ViewAttributes() ?>>
-<?php echo $detalle->id->ListViewValue() ?></span>
+			<td<?php echo $inicio->id->CellAttributes() ?>>
+<span id="el<?php echo $inicio_list->RowCnt ?>_inicio_id">
+<span<?php echo $inicio->id->ViewAttributes() ?>>
+<?php echo $inicio->id->ListViewValue() ?></span>
 </span>
 </td>
 		</tr>
 		<?php } else { // Add/edit record ?>
-		<div class="form-group detalle_id">
-			<label class="col-sm-2 control-label ewLabel"><?php echo $detalle->id->FldCaption() ?></label>
-			<div class="col-sm-10"><div<?php echo $detalle->id->CellAttributes() ?>>
-<span id="el<?php echo $detalle_list->RowCnt ?>_detalle_id">
-<span<?php echo $detalle->id->ViewAttributes() ?>>
-<?php echo $detalle->id->ListViewValue() ?></span>
+		<div class="form-group inicio_id">
+			<label class="col-sm-2 control-label ewLabel"><?php echo $inicio->id->FldCaption() ?></label>
+			<div class="col-sm-10"><div<?php echo $inicio->id->CellAttributes() ?>>
+<span id="el<?php echo $inicio_list->RowCnt ?>_inicio_id">
+<span<?php echo $inicio->id->ViewAttributes() ?>>
+<?php echo $inicio->id->ListViewValue() ?></span>
 </span>
 </div></div>
 		</div>
 		<?php } ?>
 	<?php } ?>
-	<?php if ($detalle->pedido->Visible) { // pedido ?>
-		<?php if ($detalle->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-		<tr>
-			<td class="ewTableHeader"><span class="detalle_pedido">
-<?php if ($detalle->Export <> "" || $detalle->SortUrl($detalle->pedido) == "") { ?>
-				<div class="ewTableHeaderCaption"><?php echo $detalle->pedido->FldCaption() ?></div>
-<?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $detalle->SortUrl($detalle->pedido) ?>',2);">
-            	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $detalle->pedido->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($detalle->pedido->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($detalle->pedido->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-				</div>
-<?php } ?>
-			</span></td>
-			<td<?php echo $detalle->pedido->CellAttributes() ?>>
-<span id="el<?php echo $detalle_list->RowCnt ?>_detalle_pedido">
-<span<?php echo $detalle->pedido->ViewAttributes() ?>>
-<?php echo $detalle->pedido->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-		<?php } else { // Add/edit record ?>
-		<div class="form-group detalle_pedido">
-			<label class="col-sm-2 control-label ewLabel"><?php echo $detalle->pedido->FldCaption() ?></label>
-			<div class="col-sm-10"><div<?php echo $detalle->pedido->CellAttributes() ?>>
-<span id="el<?php echo $detalle_list->RowCnt ?>_detalle_pedido">
-<span<?php echo $detalle->pedido->ViewAttributes() ?>>
-<?php echo $detalle->pedido->ListViewValue() ?></span>
-</span>
-</div></div>
-		</div>
-		<?php } ?>
-	<?php } ?>
-	<?php if ($detalle->libro->Visible) { // libro ?>
-		<?php if ($detalle->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-		<tr>
-			<td class="ewTableHeader"><span class="detalle_libro">
-<?php if ($detalle->Export <> "" || $detalle->SortUrl($detalle->libro) == "") { ?>
-				<div class="ewTableHeaderCaption"><?php echo $detalle->libro->FldCaption() ?></div>
-<?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $detalle->SortUrl($detalle->libro) ?>',2);">
-            	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $detalle->libro->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($detalle->libro->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($detalle->libro->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-				</div>
-<?php } ?>
-			</span></td>
-			<td<?php echo $detalle->libro->CellAttributes() ?>>
-<span id="el<?php echo $detalle_list->RowCnt ?>_detalle_libro">
-<span<?php echo $detalle->libro->ViewAttributes() ?>>
-<?php echo $detalle->libro->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-		<?php } else { // Add/edit record ?>
-		<div class="form-group detalle_libro">
-			<label class="col-sm-2 control-label ewLabel"><?php echo $detalle->libro->FldCaption() ?></label>
-			<div class="col-sm-10"><div<?php echo $detalle->libro->CellAttributes() ?>>
-<span id="el<?php echo $detalle_list->RowCnt ?>_detalle_libro">
-<span<?php echo $detalle->libro->ViewAttributes() ?>>
-<?php echo $detalle->libro->ListViewValue() ?></span>
-</span>
-</div></div>
-		</div>
-		<?php } ?>
-	<?php } ?>
-	<?php if ($detalle->RowType == EW_ROWTYPE_VIEW) { // View record ?>
+	<?php if ($inicio->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 	</table>
 	<?php } else { // Add/edit record ?>
 	</div>
@@ -1592,82 +1502,82 @@ while ($detalle_list->RecCnt < $detalle_list->StopRec) {
 <?php
 
 // Render list options (body, bottom)
-$detalle_list->ListOptions->Render("body", "", $detalle_list->RowCnt);
+$inicio_list->ListOptions->Render("body", "", $inicio_list->RowCnt);
 ?>
 </div>
 <div class="clearfix"></div>
 </div>
 <?php
 	}
-	if ($detalle->CurrentAction <> "gridadd")
-		$detalle_list->Recordset->MoveNext();
+	if ($inicio->CurrentAction <> "gridadd")
+		$inicio_list->Recordset->MoveNext();
 }
 ?>
-<?php echo $detalle_list->MultiColumnEndGrid() ?>
+<?php echo $inicio_list->MultiColumnEndGrid() ?>
 <div class="clearfix"></div>
 <?php } ?>
-<?php if ($detalle->CurrentAction == "") { ?>
+<?php if ($inicio->CurrentAction == "") { ?>
 <input type="hidden" name="a_list" id="a_list" value="">
 <?php } ?>
 </form>
 <?php
 
 // Close recordset
-if ($detalle_list->Recordset)
-	$detalle_list->Recordset->Close();
+if ($inicio_list->Recordset)
+	$inicio_list->Recordset->Close();
 ?>
 <div>
-<?php if ($detalle->CurrentAction <> "gridadd" && $detalle->CurrentAction <> "gridedit") { ?>
+<?php if ($inicio->CurrentAction <> "gridadd" && $inicio->CurrentAction <> "gridedit") { ?>
 <form name="ewPagerForm" class="ewForm form-inline ewPagerForm" action="<?php echo ew_CurrentPage() ?>">
-<?php if (!isset($detalle_list->Pager)) $detalle_list->Pager = new cPrevNextPager($detalle_list->StartRec, $detalle_list->DisplayRecs, $detalle_list->TotalRecs) ?>
-<?php if ($detalle_list->Pager->RecordCount > 0) { ?>
+<?php if (!isset($inicio_list->Pager)) $inicio_list->Pager = new cPrevNextPager($inicio_list->StartRec, $inicio_list->DisplayRecs, $inicio_list->TotalRecs) ?>
+<?php if ($inicio_list->Pager->RecordCount > 0) { ?>
 <div class="ewPager">
 <span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
 <div class="ewPrevNext"><div class="input-group">
 <div class="input-group-btn">
 <!--first page button-->
-	<?php if ($detalle_list->Pager->FirstButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $detalle_list->PageUrl() ?>start=<?php echo $detalle_list->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
+	<?php if ($inicio_list->Pager->FirstButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $inicio_list->PageUrl() ?>start=<?php echo $inicio_list->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
 	<?php } else { ?>
 	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
 	<?php } ?>
 <!--previous page button-->
-	<?php if ($detalle_list->Pager->PrevButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $detalle_list->PageUrl() ?>start=<?php echo $detalle_list->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php if ($inicio_list->Pager->PrevButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $inicio_list->PageUrl() ?>start=<?php echo $inicio_list->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
 	<?php } else { ?>
 	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
 	<?php } ?>
 </div>
 <!--current page number-->
-	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $detalle_list->Pager->CurrentPage ?>">
+	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $inicio_list->Pager->CurrentPage ?>">
 <div class="input-group-btn">
 <!--next page button-->
-	<?php if ($detalle_list->Pager->NextButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $detalle_list->PageUrl() ?>start=<?php echo $detalle_list->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
+	<?php if ($inicio_list->Pager->NextButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $inicio_list->PageUrl() ?>start=<?php echo $inicio_list->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
 	<?php } else { ?>
 	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
 	<?php } ?>
 <!--last page button-->
-	<?php if ($detalle_list->Pager->LastButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $detalle_list->PageUrl() ?>start=<?php echo $detalle_list->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
+	<?php if ($inicio_list->Pager->LastButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $inicio_list->PageUrl() ?>start=<?php echo $inicio_list->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
 	<?php } else { ?>
 	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
 	<?php } ?>
 </div>
 </div>
 </div>
-<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $detalle_list->Pager->PageCount ?></span>
+<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $inicio_list->Pager->PageCount ?></span>
 </div>
 <div class="ewPager ewRec">
-	<span><?php echo $Language->Phrase("Record") ?>&nbsp;<?php echo $detalle_list->Pager->FromIndex ?>&nbsp;<?php echo $Language->Phrase("To") ?>&nbsp;<?php echo $detalle_list->Pager->ToIndex ?>&nbsp;<?php echo $Language->Phrase("Of") ?>&nbsp;<?php echo $detalle_list->Pager->RecordCount ?></span>
+	<span><?php echo $Language->Phrase("Record") ?>&nbsp;<?php echo $inicio_list->Pager->FromIndex ?>&nbsp;<?php echo $Language->Phrase("To") ?>&nbsp;<?php echo $inicio_list->Pager->ToIndex ?>&nbsp;<?php echo $Language->Phrase("Of") ?>&nbsp;<?php echo $inicio_list->Pager->RecordCount ?></span>
 </div>
 <?php } ?>
-<?php if ($detalle_list->TotalRecs > 0) { ?>
+<?php if ($inicio_list->TotalRecs > 0) { ?>
 <div class="ewPager">
-<input type="hidden" name="t" value="detalle">
+<input type="hidden" name="t" value="inicio">
 <select name="<?php echo EW_TABLE_REC_PER_PAGE ?>" class="form-control input-sm" onchange="this.form.submit();">
-<option value="10"<?php if ($detalle_list->DisplayRecs == 10) { ?> selected<?php } ?>>10</option>
-<option value="20"<?php if ($detalle_list->DisplayRecs == 20) { ?> selected<?php } ?>>20</option>
+<option value="10"<?php if ($inicio_list->DisplayRecs == 10) { ?> selected<?php } ?>>10</option>
+<option value="20"<?php if ($inicio_list->DisplayRecs == 20) { ?> selected<?php } ?>>20</option>
 </select>
 </div>
 <?php } ?>
@@ -1675,7 +1585,7 @@ if ($detalle_list->Recordset)
 <?php } ?>
 <div class="ewListOtherOptions">
 <?php
-	foreach ($detalle_list->OtherOptions as &$option)
+	foreach ($inicio_list->OtherOptions as &$option)
 		$option->Render("body", "bottom");
 ?>
 </div>
@@ -1683,10 +1593,10 @@ if ($detalle_list->Recordset)
 </div>
 </div>
 <?php } ?>
-<?php if ($detalle_list->TotalRecs == 0 && $detalle->CurrentAction == "") { // Show other options ?>
+<?php if ($inicio_list->TotalRecs == 0 && $inicio->CurrentAction == "") { // Show other options ?>
 <div class="ewListOtherOptions">
 <?php
-	foreach ($detalle_list->OtherOptions as &$option) {
+	foreach ($inicio_list->OtherOptions as &$option) {
 		$option->ButtonClass = "";
 		$option->Render("body", "");
 	}
@@ -1695,10 +1605,10 @@ if ($detalle_list->Recordset)
 <div class="clearfix"></div>
 <?php } ?>
 <script type="text/javascript">
-fdetallelist.Init();
+finiciolist.Init();
 </script>
 <?php
-$detalle_list->ShowPageFooter();
+$inicio_list->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -1710,5 +1620,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$detalle_list->Page_Terminate();
+$inicio_list->Page_Terminate();
 ?>

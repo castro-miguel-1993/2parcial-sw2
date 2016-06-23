@@ -425,8 +425,6 @@ class ccliente_add extends ccliente {
 		$this->nombre->OldValue = $this->nombre->CurrentValue;
 		$this->ci->CurrentValue = NULL;
 		$this->ci->OldValue = $this->ci->CurrentValue;
-		$this->empresa->CurrentValue = NULL;
-		$this->empresa->OldValue = $this->empresa->CurrentValue;
 	}
 
 	// Load form values
@@ -440,9 +438,6 @@ class ccliente_add extends ccliente {
 		if (!$this->ci->FldIsDetailKey) {
 			$this->ci->setFormValue($objForm->GetValue("x_ci"));
 		}
-		if (!$this->empresa->FldIsDetailKey) {
-			$this->empresa->setFormValue($objForm->GetValue("x_empresa"));
-		}
 	}
 
 	// Restore form values
@@ -451,7 +446,6 @@ class ccliente_add extends ccliente {
 		$this->LoadOldRecord();
 		$this->nombre->CurrentValue = $this->nombre->FormValue;
 		$this->ci->CurrentValue = $this->ci->FormValue;
-		$this->empresa->CurrentValue = $this->empresa->FormValue;
 	}
 
 	// Load row based on key values
@@ -486,7 +480,6 @@ class ccliente_add extends ccliente {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->nombre->setDbValue($rs->fields('nombre'));
 		$this->ci->setDbValue($rs->fields('ci'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -496,7 +489,6 @@ class ccliente_add extends ccliente {
 		$this->id->DbValue = $row['id'];
 		$this->nombre->DbValue = $row['nombre'];
 		$this->ci->DbValue = $row['ci'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Load old record
@@ -535,7 +527,6 @@ class ccliente_add extends ccliente {
 		// id
 		// nombre
 		// ci
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -551,10 +542,6 @@ class ccliente_add extends ccliente {
 		$this->ci->ViewValue = $this->ci->CurrentValue;
 		$this->ci->ViewCustomAttributes = "";
 
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
-
 			// nombre
 			$this->nombre->LinkCustomAttributes = "";
 			$this->nombre->HrefValue = "";
@@ -564,11 +551,6 @@ class ccliente_add extends ccliente {
 			$this->ci->LinkCustomAttributes = "";
 			$this->ci->HrefValue = "";
 			$this->ci->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// nombre
@@ -583,12 +565,6 @@ class ccliente_add extends ccliente {
 			$this->ci->EditValue = ew_HtmlEncode($this->ci->CurrentValue);
 			$this->ci->PlaceHolder = ew_RemoveHtml($this->ci->FldCaption());
 
-			// empresa
-			$this->empresa->EditAttrs["class"] = "form-control";
-			$this->empresa->EditCustomAttributes = "";
-			$this->empresa->EditValue = ew_HtmlEncode($this->empresa->CurrentValue);
-			$this->empresa->PlaceHolder = ew_RemoveHtml($this->empresa->FldCaption());
-
 			// Add refer script
 			// nombre
 
@@ -598,10 +574,6 @@ class ccliente_add extends ccliente {
 			// ci
 			$this->ci->LinkCustomAttributes = "";
 			$this->ci->HrefValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -632,12 +604,6 @@ class ccliente_add extends ccliente {
 		}
 		if (!ew_CheckInteger($this->ci->FormValue)) {
 			ew_AddMessage($gsFormError, $this->ci->FldErrMsg());
-		}
-		if (!$this->empresa->FldIsDetailKey && !is_null($this->empresa->FormValue) && $this->empresa->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->empresa->FldCaption(), $this->empresa->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->empresa->FormValue)) {
-			ew_AddMessage($gsFormError, $this->empresa->FldErrMsg());
 		}
 
 		// Return validate result
@@ -679,9 +645,6 @@ class ccliente_add extends ccliente {
 
 		// ci
 		$this->ci->SetDbValueDef($rsnew, $this->ci->CurrentValue, 0, FALSE);
-
-		// empresa
-		$this->empresa->SetDbValueDef($rsnew, $this->empresa->CurrentValue, 0, FALSE);
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -844,12 +807,6 @@ fclienteadd.Validate = function() {
 			elm = this.GetElements("x" + infix + "_ci");
 			if (elm && !ew_CheckInteger(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($cliente->ci->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_empresa");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $cliente->empresa->FldCaption(), $cliente->empresa->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_empresa");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($cliente->empresa->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -924,16 +881,6 @@ $cliente_add->ShowMessage();
 <input type="text" data-table="cliente" data-field="x_ci" name="x_ci" id="x_ci" size="30" placeholder="<?php echo ew_HtmlEncode($cliente->ci->getPlaceHolder()) ?>" value="<?php echo $cliente->ci->EditValue ?>"<?php echo $cliente->ci->EditAttributes() ?>>
 </span>
 <?php echo $cliente->ci->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($cliente->empresa->Visible) { // empresa ?>
-	<div id="r_empresa" class="form-group">
-		<label id="elh_cliente_empresa" for="x_empresa" class="col-sm-2 control-label ewLabel"><?php echo $cliente->empresa->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $cliente->empresa->CellAttributes() ?>>
-<span id="el_cliente_empresa">
-<input type="text" data-table="cliente" data-field="x_empresa" name="x_empresa" id="x_empresa" size="30" placeholder="<?php echo ew_HtmlEncode($cliente->empresa->getPlaceHolder()) ?>" value="<?php echo $cliente->empresa->EditValue ?>"<?php echo $cliente->empresa->EditAttributes() ?>>
-</span>
-<?php echo $cliente->empresa->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

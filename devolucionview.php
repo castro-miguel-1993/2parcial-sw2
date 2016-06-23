@@ -528,7 +528,6 @@ class cdevolucion_view extends cdevolucion {
 		$this->empleado->setDbValue($rs->fields('empleado'));
 		$this->fecha->setDbValue($rs->fields('fecha'));
 		$this->cliente->setDbValue($rs->fields('cliente'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -539,7 +538,6 @@ class cdevolucion_view extends cdevolucion {
 		$this->empleado->DbValue = $row['empleado'];
 		$this->fecha->DbValue = $row['fecha'];
 		$this->cliente->DbValue = $row['cliente'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Render row values based on field settings
@@ -562,7 +560,6 @@ class cdevolucion_view extends cdevolucion {
 		// empleado
 		// fecha
 		// cliente
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -581,10 +578,6 @@ class cdevolucion_view extends cdevolucion {
 		// cliente
 		$this->cliente->ViewValue = $this->cliente->CurrentValue;
 		$this->cliente->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
 
 			// id
 			$this->id->LinkCustomAttributes = "";
@@ -605,11 +598,6 @@ class cdevolucion_view extends cdevolucion {
 			$this->cliente->LinkCustomAttributes = "";
 			$this->cliente->HrefValue = "";
 			$this->cliente->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -822,17 +810,6 @@ $devolucion_view->ShowMessage();
 <span id="el_devolucion_cliente">
 <span<?php echo $devolucion->cliente->ViewAttributes() ?>>
 <?php echo $devolucion->cliente->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($devolucion->empresa->Visible) { // empresa ?>
-	<tr id="r_empresa">
-		<td><span id="elh_devolucion_empresa"><?php echo $devolucion->empresa->FldCaption() ?></span></td>
-		<td data-name="empresa"<?php echo $devolucion->empresa->CellAttributes() ?>>
-<span id="el_devolucion_empresa">
-<span<?php echo $devolucion->empresa->ViewAttributes() ?>>
-<?php echo $devolucion->empresa->ViewValue ?></span>
 </span>
 </td>
 	</tr>

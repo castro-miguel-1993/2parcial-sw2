@@ -453,9 +453,6 @@ class cdevolucion_edit extends cdevolucion {
 		if (!$this->cliente->FldIsDetailKey) {
 			$this->cliente->setFormValue($objForm->GetValue("x_cliente"));
 		}
-		if (!$this->empresa->FldIsDetailKey) {
-			$this->empresa->setFormValue($objForm->GetValue("x_empresa"));
-		}
 	}
 
 	// Restore form values
@@ -466,7 +463,6 @@ class cdevolucion_edit extends cdevolucion {
 		$this->empleado->CurrentValue = $this->empleado->FormValue;
 		$this->fecha->CurrentValue = $this->fecha->FormValue;
 		$this->cliente->CurrentValue = $this->cliente->FormValue;
-		$this->empresa->CurrentValue = $this->empresa->FormValue;
 	}
 
 	// Load row based on key values
@@ -502,7 +498,6 @@ class cdevolucion_edit extends cdevolucion {
 		$this->empleado->setDbValue($rs->fields('empleado'));
 		$this->fecha->setDbValue($rs->fields('fecha'));
 		$this->cliente->setDbValue($rs->fields('cliente'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -513,7 +508,6 @@ class cdevolucion_edit extends cdevolucion {
 		$this->empleado->DbValue = $row['empleado'];
 		$this->fecha->DbValue = $row['fecha'];
 		$this->cliente->DbValue = $row['cliente'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Render row values based on field settings
@@ -530,7 +524,6 @@ class cdevolucion_edit extends cdevolucion {
 		// empleado
 		// fecha
 		// cliente
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -549,10 +542,6 @@ class cdevolucion_edit extends cdevolucion {
 		// cliente
 		$this->cliente->ViewValue = $this->cliente->CurrentValue;
 		$this->cliente->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
 
 			// id
 			$this->id->LinkCustomAttributes = "";
@@ -573,11 +562,6 @@ class cdevolucion_edit extends cdevolucion {
 			$this->cliente->LinkCustomAttributes = "";
 			$this->cliente->HrefValue = "";
 			$this->cliente->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
 			// id
@@ -604,12 +588,6 @@ class cdevolucion_edit extends cdevolucion {
 			$this->cliente->EditValue = ew_HtmlEncode($this->cliente->CurrentValue);
 			$this->cliente->PlaceHolder = ew_RemoveHtml($this->cliente->FldCaption());
 
-			// empresa
-			$this->empresa->EditAttrs["class"] = "form-control";
-			$this->empresa->EditCustomAttributes = "";
-			$this->empresa->EditValue = ew_HtmlEncode($this->empresa->CurrentValue);
-			$this->empresa->PlaceHolder = ew_RemoveHtml($this->empresa->FldCaption());
-
 			// Edit refer script
 			// id
 
@@ -627,10 +605,6 @@ class cdevolucion_edit extends cdevolucion {
 			// cliente
 			$this->cliente->LinkCustomAttributes = "";
 			$this->cliente->HrefValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -664,12 +638,6 @@ class cdevolucion_edit extends cdevolucion {
 		}
 		if (!$this->cliente->FldIsDetailKey && !is_null($this->cliente->FormValue) && $this->cliente->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->cliente->FldCaption(), $this->cliente->ReqErrMsg));
-		}
-		if (!$this->empresa->FldIsDetailKey && !is_null($this->empresa->FormValue) && $this->empresa->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->empresa->FldCaption(), $this->empresa->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->empresa->FormValue)) {
-			ew_AddMessage($gsFormError, $this->empresa->FldErrMsg());
 		}
 
 		// Return validate result
@@ -715,9 +683,6 @@ class cdevolucion_edit extends cdevolucion {
 
 			// cliente
 			$this->cliente->SetDbValueDef($rsnew, $this->cliente->CurrentValue, "", $this->cliente->ReadOnly);
-
-			// empresa
-			$this->empresa->SetDbValueDef($rsnew, $this->empresa->CurrentValue, 0, $this->empresa->ReadOnly);
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -881,12 +846,6 @@ fdevolucionedit.Validate = function() {
 			elm = this.GetElements("x" + infix + "_cliente");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $devolucion->cliente->FldCaption(), $devolucion->cliente->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_empresa");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $devolucion->empresa->FldCaption(), $devolucion->empresa->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_empresa");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($devolucion->empresa->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -983,16 +942,6 @@ $devolucion_edit->ShowMessage();
 <input type="text" data-table="devolucion" data-field="x_cliente" name="x_cliente" id="x_cliente" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($devolucion->cliente->getPlaceHolder()) ?>" value="<?php echo $devolucion->cliente->EditValue ?>"<?php echo $devolucion->cliente->EditAttributes() ?>>
 </span>
 <?php echo $devolucion->cliente->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($devolucion->empresa->Visible) { // empresa ?>
-	<div id="r_empresa" class="form-group">
-		<label id="elh_devolucion_empresa" for="x_empresa" class="col-sm-2 control-label ewLabel"><?php echo $devolucion->empresa->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $devolucion->empresa->CellAttributes() ?>>
-<span id="el_devolucion_empresa">
-<input type="text" data-table="devolucion" data-field="x_empresa" name="x_empresa" id="x_empresa" size="30" placeholder="<?php echo ew_HtmlEncode($devolucion->empresa->getPlaceHolder()) ?>" value="<?php echo $devolucion->empresa->EditValue ?>"<?php echo $devolucion->empresa->EditAttributes() ?>>
-</span>
-<?php echo $devolucion->empresa->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

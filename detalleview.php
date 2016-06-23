@@ -527,7 +527,6 @@ class cdetalle_view extends cdetalle {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->pedido->setDbValue($rs->fields('pedido'));
 		$this->libro->setDbValue($rs->fields('libro'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -537,7 +536,6 @@ class cdetalle_view extends cdetalle {
 		$this->id->DbValue = $row['id'];
 		$this->pedido->DbValue = $row['pedido'];
 		$this->libro->DbValue = $row['libro'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Render row values based on field settings
@@ -559,7 +557,6 @@ class cdetalle_view extends cdetalle {
 		// id
 		// pedido
 		// libro
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -575,10 +572,6 @@ class cdetalle_view extends cdetalle {
 		$this->libro->ViewValue = $this->libro->CurrentValue;
 		$this->libro->ViewCustomAttributes = "";
 
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
-
 			// id
 			$this->id->LinkCustomAttributes = "";
 			$this->id->HrefValue = "";
@@ -593,11 +586,6 @@ class cdetalle_view extends cdetalle {
 			$this->libro->LinkCustomAttributes = "";
 			$this->libro->HrefValue = "";
 			$this->libro->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -799,17 +787,6 @@ $detalle_view->ShowMessage();
 <span id="el_detalle_libro">
 <span<?php echo $detalle->libro->ViewAttributes() ?>>
 <?php echo $detalle->libro->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($detalle->empresa->Visible) { // empresa ?>
-	<tr id="r_empresa">
-		<td><span id="elh_detalle_empresa"><?php echo $detalle->empresa->FldCaption() ?></span></td>
-		<td data-name="empresa"<?php echo $detalle->empresa->CellAttributes() ?>>
-<span id="el_detalle_empresa">
-<span<?php echo $detalle->empresa->ViewAttributes() ?>>
-<?php echo $detalle->empresa->ViewValue ?></span>
 </span>
 </td>
 	</tr>

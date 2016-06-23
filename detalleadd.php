@@ -425,8 +425,6 @@ class cdetalle_add extends cdetalle {
 		$this->pedido->OldValue = $this->pedido->CurrentValue;
 		$this->libro->CurrentValue = NULL;
 		$this->libro->OldValue = $this->libro->CurrentValue;
-		$this->empresa->CurrentValue = NULL;
-		$this->empresa->OldValue = $this->empresa->CurrentValue;
 	}
 
 	// Load form values
@@ -440,9 +438,6 @@ class cdetalle_add extends cdetalle {
 		if (!$this->libro->FldIsDetailKey) {
 			$this->libro->setFormValue($objForm->GetValue("x_libro"));
 		}
-		if (!$this->empresa->FldIsDetailKey) {
-			$this->empresa->setFormValue($objForm->GetValue("x_empresa"));
-		}
 	}
 
 	// Restore form values
@@ -451,7 +446,6 @@ class cdetalle_add extends cdetalle {
 		$this->LoadOldRecord();
 		$this->pedido->CurrentValue = $this->pedido->FormValue;
 		$this->libro->CurrentValue = $this->libro->FormValue;
-		$this->empresa->CurrentValue = $this->empresa->FormValue;
 	}
 
 	// Load row based on key values
@@ -486,7 +480,6 @@ class cdetalle_add extends cdetalle {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->pedido->setDbValue($rs->fields('pedido'));
 		$this->libro->setDbValue($rs->fields('libro'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -496,7 +489,6 @@ class cdetalle_add extends cdetalle {
 		$this->id->DbValue = $row['id'];
 		$this->pedido->DbValue = $row['pedido'];
 		$this->libro->DbValue = $row['libro'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Load old record
@@ -535,7 +527,6 @@ class cdetalle_add extends cdetalle {
 		// id
 		// pedido
 		// libro
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -551,10 +542,6 @@ class cdetalle_add extends cdetalle {
 		$this->libro->ViewValue = $this->libro->CurrentValue;
 		$this->libro->ViewCustomAttributes = "";
 
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
-
 			// pedido
 			$this->pedido->LinkCustomAttributes = "";
 			$this->pedido->HrefValue = "";
@@ -564,11 +551,6 @@ class cdetalle_add extends cdetalle {
 			$this->libro->LinkCustomAttributes = "";
 			$this->libro->HrefValue = "";
 			$this->libro->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// pedido
@@ -583,12 +565,6 @@ class cdetalle_add extends cdetalle {
 			$this->libro->EditValue = ew_HtmlEncode($this->libro->CurrentValue);
 			$this->libro->PlaceHolder = ew_RemoveHtml($this->libro->FldCaption());
 
-			// empresa
-			$this->empresa->EditAttrs["class"] = "form-control";
-			$this->empresa->EditCustomAttributes = "";
-			$this->empresa->EditValue = ew_HtmlEncode($this->empresa->CurrentValue);
-			$this->empresa->PlaceHolder = ew_RemoveHtml($this->empresa->FldCaption());
-
 			// Add refer script
 			// pedido
 
@@ -598,10 +574,6 @@ class cdetalle_add extends cdetalle {
 			// libro
 			$this->libro->LinkCustomAttributes = "";
 			$this->libro->HrefValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -636,12 +608,6 @@ class cdetalle_add extends cdetalle {
 		if (!ew_CheckInteger($this->libro->FormValue)) {
 			ew_AddMessage($gsFormError, $this->libro->FldErrMsg());
 		}
-		if (!$this->empresa->FldIsDetailKey && !is_null($this->empresa->FormValue) && $this->empresa->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->empresa->FldCaption(), $this->empresa->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->empresa->FormValue)) {
-			ew_AddMessage($gsFormError, $this->empresa->FldErrMsg());
-		}
 
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
@@ -671,9 +637,6 @@ class cdetalle_add extends cdetalle {
 
 		// libro
 		$this->libro->SetDbValueDef($rsnew, $this->libro->CurrentValue, 0, FALSE);
-
-		// empresa
-		$this->empresa->SetDbValueDef($rsnew, $this->empresa->CurrentValue, 0, FALSE);
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -839,12 +802,6 @@ fdetalleadd.Validate = function() {
 			elm = this.GetElements("x" + infix + "_libro");
 			if (elm && !ew_CheckInteger(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($detalle->libro->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_empresa");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $detalle->empresa->FldCaption(), $detalle->empresa->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_empresa");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($detalle->empresa->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -919,16 +876,6 @@ $detalle_add->ShowMessage();
 <input type="text" data-table="detalle" data-field="x_libro" name="x_libro" id="x_libro" size="30" placeholder="<?php echo ew_HtmlEncode($detalle->libro->getPlaceHolder()) ?>" value="<?php echo $detalle->libro->EditValue ?>"<?php echo $detalle->libro->EditAttributes() ?>>
 </span>
 <?php echo $detalle->libro->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($detalle->empresa->Visible) { // empresa ?>
-	<div id="r_empresa" class="form-group">
-		<label id="elh_detalle_empresa" for="x_empresa" class="col-sm-2 control-label ewLabel"><?php echo $detalle->empresa->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $detalle->empresa->CellAttributes() ?>>
-<span id="el_detalle_empresa">
-<input type="text" data-table="detalle" data-field="x_empresa" name="x_empresa" id="x_empresa" size="30" placeholder="<?php echo ew_HtmlEncode($detalle->empresa->getPlaceHolder()) ?>" value="<?php echo $detalle->empresa->EditValue ?>"<?php echo $detalle->empresa->EditAttributes() ?>>
-</span>
-<?php echo $detalle->empresa->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

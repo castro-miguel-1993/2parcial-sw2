@@ -10,7 +10,6 @@ class cdetalle extends cTable {
 	var $id;
 	var $pedido;
 	var $libro;
-	var $empresa;
 
 	//
 	// Table class constructor
@@ -56,15 +55,10 @@ class cdetalle extends cTable {
 		$this->libro = new cField('detalle', 'detalle', 'x_libro', 'libro', '`libro`', '`libro`', 3, -1, FALSE, '`libro`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->libro->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['libro'] = &$this->libro;
-
-		// empresa
-		$this->empresa = new cField('detalle', 'detalle', 'x_empresa', 'empresa', '`empresa`', '`empresa`', 3, -1, FALSE, '`empresa`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->empresa->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
-		$this->fields['empresa'] = &$this->empresa;
 	}
 
-	// Single column sort
-	function UpdateSort(&$ofld) {
+	// Multiple column sort
+	function UpdateSort(&$ofld, $ctrl) {
 		if ($this->CurrentOrder == $ofld->FldName) {
 			$sSortField = $ofld->FldExpression;
 			$sLastSort = $ofld->getSort();
@@ -74,9 +68,20 @@ class cdetalle extends cTable {
 				$sThisSort = ($sLastSort == "ASC") ? "DESC" : "ASC";
 			}
 			$ofld->setSort($sThisSort);
-			$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			if ($ctrl) {
+				$sOrderBy = $this->getSessionOrderBy();
+				if (strpos($sOrderBy, $sSortField . " " . $sLastSort) !== FALSE) {
+					$sOrderBy = str_replace($sSortField . " " . $sLastSort, $sSortField . " " . $sThisSort, $sOrderBy);
+				} else {
+					if ($sOrderBy <> "") $sOrderBy .= ", ";
+					$sOrderBy .= $sSortField . " " . $sThisSort;
+				}
+				$this->setSessionOrderBy($sOrderBy); // Save to Session
+			} else {
+				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			}
 		} else {
-			$ofld->setSort("");
+			if (!$ctrl) $ofld->setSort("");
 		}
 	}
 
@@ -540,7 +545,6 @@ class cdetalle extends cTable {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->pedido->setDbValue($rs->fields('pedido'));
 		$this->libro->setDbValue($rs->fields('libro'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Render list row values
@@ -554,7 +558,6 @@ class cdetalle extends cTable {
 		// id
 		// pedido
 		// libro
-		// empresa
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -567,10 +570,6 @@ class cdetalle extends cTable {
 		// libro
 		$this->libro->ViewValue = $this->libro->CurrentValue;
 		$this->libro->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -586,11 +585,6 @@ class cdetalle extends cTable {
 		$this->libro->LinkCustomAttributes = "";
 		$this->libro->HrefValue = "";
 		$this->libro->TooltipValue = "";
-
-		// empresa
-		$this->empresa->LinkCustomAttributes = "";
-		$this->empresa->HrefValue = "";
-		$this->empresa->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -620,12 +614,6 @@ class cdetalle extends cTable {
 		$this->libro->EditCustomAttributes = "";
 		$this->libro->EditValue = $this->libro->CurrentValue;
 		$this->libro->PlaceHolder = ew_RemoveHtml($this->libro->FldCaption());
-
-		// empresa
-		$this->empresa->EditAttrs["class"] = "form-control";
-		$this->empresa->EditCustomAttributes = "";
-		$this->empresa->EditValue = $this->empresa->CurrentValue;
-		$this->empresa->PlaceHolder = ew_RemoveHtml($this->empresa->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -657,12 +645,10 @@ class cdetalle extends cTable {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->pedido->Exportable) $Doc->ExportCaption($this->pedido);
 					if ($this->libro->Exportable) $Doc->ExportCaption($this->libro);
-					if ($this->empresa->Exportable) $Doc->ExportCaption($this->empresa);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->pedido->Exportable) $Doc->ExportCaption($this->pedido);
 					if ($this->libro->Exportable) $Doc->ExportCaption($this->libro);
-					if ($this->empresa->Exportable) $Doc->ExportCaption($this->empresa);
 				}
 				$Doc->EndExportRow();
 			}
@@ -697,12 +683,10 @@ class cdetalle extends cTable {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->pedido->Exportable) $Doc->ExportField($this->pedido);
 						if ($this->libro->Exportable) $Doc->ExportField($this->libro);
-						if ($this->empresa->Exportable) $Doc->ExportField($this->empresa);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->pedido->Exportable) $Doc->ExportField($this->pedido);
 						if ($this->libro->Exportable) $Doc->ExportField($this->libro);
-						if ($this->empresa->Exportable) $Doc->ExportField($this->empresa);
 					}
 					$Doc->EndExportRow();
 				}

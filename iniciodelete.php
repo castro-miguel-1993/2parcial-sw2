@@ -1,11 +1,11 @@
-in<?php
+<?php
 if (session_id() == "") session_start(); // Initialize Session data
 ob_start(); // Turn on output buffering
 ?>
 <?php include_once "ewcfg12.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql12.php") ?>
 <?php include_once "phpfn12.php" ?>
-<?php include_once "administradorinfo.php" ?>
+<?php include_once "inicioinfo.php" ?>
 <?php include_once "userfn12.php" ?>
 <?php
 
@@ -13,9 +13,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$administrador_delete = NULL; // Initialize page object first
+$inicio_delete = NULL; // Initialize page object first
 
-class cadministrador_delete extends cadministrador {
+class cinicio_delete extends cinicio {
 
 	// Page ID
 	var $PageID = 'delete';
@@ -24,10 +24,10 @@ class cadministrador_delete extends cadministrador {
 	var $ProjectID = "{2604CCF7-311F-415E-9E95-9937AECA0470}";
 
 	// Table name
-	var $TableName = 'administrador';
+	var $TableName = 'inicio';
 
 	// Page object name
-	var $PageObjName = 'administrador_delete';
+	var $PageObjName = 'inicio_delete';
 
 	// Page name
 	function PageName() {
@@ -220,10 +220,10 @@ class cadministrador_delete extends cadministrador {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (administrador)
-		if (!isset($GLOBALS["administrador"]) || get_class($GLOBALS["administrador"]) == "cadministrador") {
-			$GLOBALS["administrador"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["administrador"];
+		// Table object (inicio)
+		if (!isset($GLOBALS["inicio"]) || get_class($GLOBALS["inicio"]) == "cinicio") {
+			$GLOBALS["inicio"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["inicio"];
 		}
 
 		// Page ID
@@ -232,7 +232,7 @@ class cadministrador_delete extends cadministrador {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 'administrador', TRUE);
+			define("EW_TABLE_NAME", 'inicio', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -279,13 +279,13 @@ class cadministrador_delete extends cadministrador {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $administrador;
+		global $EW_EXPORT, $inicio;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($administrador);
+				$doc = new $class($inicio);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -331,10 +331,10 @@ class cadministrador_delete extends cadministrador {
 		$this->RecKeys = $this->GetRecordKeys(); // Load record keys
 		$sFilter = $this->GetKeyFilter();
 		if ($sFilter == "")
-			$this->Page_Terminate("administradorlist.php"); // Prevent SQL injection, return to list
+			$this->Page_Terminate("iniciolist.php"); // Prevent SQL injection, return to list
 
 		// Set up filter (SQL WHHERE clause) and get return SQL
-		// SQL constructor in administrador class, administradorinfo.php
+		// SQL constructor in inicio class, inicioinfo.php
 
 		$this->CurrentFilter = $sFilter;
 
@@ -360,7 +360,7 @@ class cadministrador_delete extends cadministrador {
 			if ($this->TotalRecs <= 0) { // No record found, exit
 				if ($this->Recordset)
 					$this->Recordset->Close();
-				$this->Page_Terminate("administradorlist.php"); // Return to list
+				$this->Page_Terminate("iniciolist.php"); // Return to list
 			}
 		}
 	}
@@ -421,10 +421,6 @@ class cadministrador_delete extends cadministrador {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->ci->setDbValue($rs->fields('ci'));
-		$this->nombre->setDbValue($rs->fields('nombre'));
-		$this->cargo->setDbValue($rs->fields('cargo'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -432,10 +428,6 @@ class cadministrador_delete extends cadministrador {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->ci->DbValue = $row['ci'];
-		$this->nombre->DbValue = $row['nombre'];
-		$this->cargo->DbValue = $row['cargo'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Render row values based on field settings
@@ -449,10 +441,6 @@ class cadministrador_delete extends cadministrador {
 
 		// Common render codes for all row types
 		// id
-		// ci
-		// nombre
-		// cargo
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -460,46 +448,10 @@ class cadministrador_delete extends cadministrador {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// ci
-		$this->ci->ViewValue = $this->ci->CurrentValue;
-		$this->ci->ViewCustomAttributes = "";
-
-		// nombre
-		$this->nombre->ViewValue = $this->nombre->CurrentValue;
-		$this->nombre->ViewCustomAttributes = "";
-
-		// cargo
-		$this->cargo->ViewValue = $this->cargo->CurrentValue;
-		$this->cargo->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
-
 			// id
 			$this->id->LinkCustomAttributes = "";
 			$this->id->HrefValue = "";
 			$this->id->TooltipValue = "";
-
-			// ci
-			$this->ci->LinkCustomAttributes = "";
-			$this->ci->HrefValue = "";
-			$this->ci->TooltipValue = "";
-
-			// nombre
-			$this->nombre->LinkCustomAttributes = "";
-			$this->nombre->HrefValue = "";
-			$this->nombre->TooltipValue = "";
-
-			// cargo
-			$this->cargo->LinkCustomAttributes = "";
-			$this->cargo->HrefValue = "";
-			$this->cargo->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -591,7 +543,7 @@ class cadministrador_delete extends cadministrador {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("administradorlist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("iniciolist.php"), "", $this->TableVar, TRUE);
 		$PageId = "delete";
 		$Breadcrumb->Add("delete", $PageId, $url);
 	}
@@ -661,29 +613,29 @@ class cadministrador_delete extends cadministrador {
 <?php
 
 // Create page object
-if (!isset($administrador_delete)) $administrador_delete = new cadministrador_delete();
+if (!isset($inicio_delete)) $inicio_delete = new cinicio_delete();
 
 // Page init
-$administrador_delete->Page_Init();
+$inicio_delete->Page_Init();
 
 // Page main
-$administrador_delete->Page_Main();
+$inicio_delete->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$administrador_delete->Page_Render();
+$inicio_delete->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "delete";
-var CurrentForm = fadministradordelete = new ew_Form("fadministradordelete", "delete");
+var CurrentForm = finiciodelete = new ew_Form("finiciodelete", "delete");
 
 // Form_CustomValidate event
-fadministradordelete.Form_CustomValidate = 
+finiciodelete.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -692,9 +644,9 @@ fadministradordelete.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-fadministradordelete.ValidateRequired = true;
+finiciodelete.ValidateRequired = true;
 <?php } else { ?>
-fadministradordelete.ValidateRequired = false; 
+finiciodelete.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
@@ -710,107 +662,63 @@ fadministradordelete.ValidateRequired = false;
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
-<?php $administrador_delete->ShowPageHeader(); ?>
+<?php $inicio_delete->ShowPageHeader(); ?>
 <?php
-$administrador_delete->ShowMessage();
+$inicio_delete->ShowMessage();
 ?>
-<form name="fadministradordelete" id="fadministradordelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($administrador_delete->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $administrador_delete->Token ?>">
+<form name="finiciodelete" id="finiciodelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($inicio_delete->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $inicio_delete->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="administrador">
+<input type="hidden" name="t" value="inicio">
 <input type="hidden" name="a_delete" id="a_delete" value="D">
-<?php foreach ($administrador_delete->RecKeys as $key) { ?>
+<?php foreach ($inicio_delete->RecKeys as $key) { ?>
 <?php $keyvalue = is_array($key) ? implode($EW_COMPOSITE_KEY_SEPARATOR, $key) : $key; ?>
 <input type="hidden" name="key_m[]" value="<?php echo ew_HtmlEncode($keyvalue) ?>">
 <?php } ?>
 <div class="ewGrid">
 <div class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
 <table class="table ewTable">
-<?php echo $administrador->TableCustomInnerHtml ?>
+<?php echo $inicio->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($administrador->id->Visible) { // id ?>
-		<th><span id="elh_administrador_id" class="administrador_id"><?php echo $administrador->id->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($administrador->ci->Visible) { // ci ?>
-		<th><span id="elh_administrador_ci" class="administrador_ci"><?php echo $administrador->ci->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($administrador->nombre->Visible) { // nombre ?>
-		<th><span id="elh_administrador_nombre" class="administrador_nombre"><?php echo $administrador->nombre->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($administrador->cargo->Visible) { // cargo ?>
-		<th><span id="elh_administrador_cargo" class="administrador_cargo"><?php echo $administrador->cargo->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($administrador->empresa->Visible) { // empresa ?>
-		<th><span id="elh_administrador_empresa" class="administrador_empresa"><?php echo $administrador->empresa->FldCaption() ?></span></th>
+<?php if ($inicio->id->Visible) { // id ?>
+		<th><span id="elh_inicio_id" class="inicio_id"><?php echo $inicio->id->FldCaption() ?></span></th>
 <?php } ?>
 	</tr>
 	</thead>
 	<tbody>
 <?php
-$administrador_delete->RecCnt = 0;
+$inicio_delete->RecCnt = 0;
 $i = 0;
-while (!$administrador_delete->Recordset->EOF) {
-	$administrador_delete->RecCnt++;
-	$administrador_delete->RowCnt++;
+while (!$inicio_delete->Recordset->EOF) {
+	$inicio_delete->RecCnt++;
+	$inicio_delete->RowCnt++;
 
 	// Set row properties
-	$administrador->ResetAttrs();
-	$administrador->RowType = EW_ROWTYPE_VIEW; // View
+	$inicio->ResetAttrs();
+	$inicio->RowType = EW_ROWTYPE_VIEW; // View
 
 	// Get the field contents
-	$administrador_delete->LoadRowValues($administrador_delete->Recordset);
+	$inicio_delete->LoadRowValues($inicio_delete->Recordset);
 
 	// Render row
-	$administrador_delete->RenderRow();
+	$inicio_delete->RenderRow();
 ?>
-	<tr<?php echo $administrador->RowAttributes() ?>>
-<?php if ($administrador->id->Visible) { // id ?>
-		<td<?php echo $administrador->id->CellAttributes() ?>>
-<span id="el<?php echo $administrador_delete->RowCnt ?>_administrador_id" class="administrador_id">
-<span<?php echo $administrador->id->ViewAttributes() ?>>
-<?php echo $administrador->id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($administrador->ci->Visible) { // ci ?>
-		<td<?php echo $administrador->ci->CellAttributes() ?>>
-<span id="el<?php echo $administrador_delete->RowCnt ?>_administrador_ci" class="administrador_ci">
-<span<?php echo $administrador->ci->ViewAttributes() ?>>
-<?php echo $administrador->ci->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($administrador->nombre->Visible) { // nombre ?>
-		<td<?php echo $administrador->nombre->CellAttributes() ?>>
-<span id="el<?php echo $administrador_delete->RowCnt ?>_administrador_nombre" class="administrador_nombre">
-<span<?php echo $administrador->nombre->ViewAttributes() ?>>
-<?php echo $administrador->nombre->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($administrador->cargo->Visible) { // cargo ?>
-		<td<?php echo $administrador->cargo->CellAttributes() ?>>
-<span id="el<?php echo $administrador_delete->RowCnt ?>_administrador_cargo" class="administrador_cargo">
-<span<?php echo $administrador->cargo->ViewAttributes() ?>>
-<?php echo $administrador->cargo->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($administrador->empresa->Visible) { // empresa ?>
-		<td<?php echo $administrador->empresa->CellAttributes() ?>>
-<span id="el<?php echo $administrador_delete->RowCnt ?>_administrador_empresa" class="administrador_empresa">
-<span<?php echo $administrador->empresa->ViewAttributes() ?>>
-<?php echo $administrador->empresa->ListViewValue() ?></span>
+	<tr<?php echo $inicio->RowAttributes() ?>>
+<?php if ($inicio->id->Visible) { // id ?>
+		<td<?php echo $inicio->id->CellAttributes() ?>>
+<span id="el<?php echo $inicio_delete->RowCnt ?>_inicio_id" class="inicio_id">
+<span<?php echo $inicio->id->ViewAttributes() ?>>
+<?php echo $inicio->id->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
 	</tr>
 <?php
-	$administrador_delete->Recordset->MoveNext();
+	$inicio_delete->Recordset->MoveNext();
 }
-$administrador_delete->Recordset->Close();
+$inicio_delete->Recordset->Close();
 ?>
 </tbody>
 </table>
@@ -818,14 +726,14 @@ $administrador_delete->Recordset->Close();
 </div>
 <div>
 <button class="btn btn-primary ewButton" name="btnAction" id="btnAction" type="submit"><?php echo $Language->Phrase("DeleteBtn") ?></button>
-<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $administrador_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
+<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $inicio_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 </div>
 </form>
 <script type="text/javascript">
-fadministradordelete.Init();
+finiciodelete.Init();
 </script>
 <?php
-$administrador_delete->ShowPageFooter();
+$inicio_delete->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -837,5 +745,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$administrador_delete->Page_Terminate();
+$inicio_delete->Page_Terminate();
 ?>

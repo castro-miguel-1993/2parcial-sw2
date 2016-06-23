@@ -479,8 +479,8 @@ class cadministrador_list extends cadministrador {
 		global $objForm, $Language, $gsFormError, $gsSearchError, $Security;
 
 		// Multi Column
-		$this->RecPerRow = 6;
-		$this->MultiColumnCnt = 2;
+		$this->RecPerRow = 1;
+		$this->MultiColumnCnt = 12;
 		$this->MultiColumnEditCnt = 12;
 
 		// Search filters
@@ -680,7 +680,6 @@ class cadministrador_list extends cadministrador {
 		$sFilterList = ew_Concat($sFilterList, $this->ci->AdvancedSearch->ToJSON(), ","); // Field ci
 		$sFilterList = ew_Concat($sFilterList, $this->nombre->AdvancedSearch->ToJSON(), ","); // Field nombre
 		$sFilterList = ew_Concat($sFilterList, $this->cargo->AdvancedSearch->ToJSON(), ","); // Field cargo
-		$sFilterList = ew_Concat($sFilterList, $this->empresa->AdvancedSearch->ToJSON(), ","); // Field empresa
 		if ($this->BasicSearch->Keyword <> "") {
 			$sWrk = "\"" . EW_TABLE_BASIC_SEARCH . "\":\"" . ew_JsEncode2($this->BasicSearch->Keyword) . "\",\"" . EW_TABLE_BASIC_SEARCH_TYPE . "\":\"" . ew_JsEncode2($this->BasicSearch->Type) . "\"";
 			$sFilterList = ew_Concat($sFilterList, $sWrk, ",");
@@ -730,14 +729,6 @@ class cadministrador_list extends cadministrador {
 		$this->cargo->AdvancedSearch->SearchValue2 = @$filter["y_cargo"];
 		$this->cargo->AdvancedSearch->SearchOperator2 = @$filter["w_cargo"];
 		$this->cargo->AdvancedSearch->Save();
-
-		// Field empresa
-		$this->empresa->AdvancedSearch->SearchValue = @$filter["x_empresa"];
-		$this->empresa->AdvancedSearch->SearchOperator = @$filter["z_empresa"];
-		$this->empresa->AdvancedSearch->SearchCondition = @$filter["v_empresa"];
-		$this->empresa->AdvancedSearch->SearchValue2 = @$filter["y_empresa"];
-		$this->empresa->AdvancedSearch->SearchOperator2 = @$filter["w_empresa"];
-		$this->empresa->AdvancedSearch->Save();
 		$this->BasicSearch->setKeyword(@$filter[EW_TABLE_BASIC_SEARCH]);
 		$this->BasicSearch->setType(@$filter[EW_TABLE_BASIC_SEARCH_TYPE]);
 	}
@@ -906,15 +897,17 @@ class cadministrador_list extends cadministrador {
 	// Set up sort parameters
 	function SetUpSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->id); // id
-			$this->UpdateSort($this->ci); // ci
-			$this->UpdateSort($this->nombre); // nombre
-			$this->UpdateSort($this->cargo); // cargo
-			$this->UpdateSort($this->empresa); // empresa
+			$this->UpdateSort($this->id, $bCtrl); // id
+			$this->UpdateSort($this->ci, $bCtrl); // ci
+			$this->UpdateSort($this->nombre, $bCtrl); // nombre
+			$this->UpdateSort($this->cargo, $bCtrl); // cargo
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -951,7 +944,6 @@ class cadministrador_list extends cadministrador {
 				$this->ci->setSort("");
 				$this->nombre->setSort("");
 				$this->cargo->setSort("");
-				$this->empresa->setSort("");
 			}
 
 			// Reset start position
@@ -988,12 +980,6 @@ class cadministrador_list extends cadministrador {
 		$item->Visible = TRUE;
 		$item->OnLeft = FALSE;
 
-		// "delete"
-		$item = &$this->ListOptions->Add("delete");
-		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
-		$item->OnLeft = FALSE;
-
 		// List actions
 		$item = &$this->ListOptions->Add("listactions");
 		$item->CssStyle = "white-space: nowrap;";
@@ -1004,7 +990,7 @@ class cadministrador_list extends cadministrador {
 
 		// "checkbox"
 		$item = &$this->ListOptions->Add("checkbox");
-		$item->Visible = FALSE;
+		$item->Visible = TRUE;
 		$item->OnLeft = FALSE;
 		$item->Header = "<input type=\"checkbox\" name=\"key\" id=\"key\" onclick=\"ew_SelectAllKey(this);\">";
 		$item->ShowInDropDown = FALSE;
@@ -1053,13 +1039,6 @@ class cadministrador_list extends cadministrador {
 		} else {
 			$oListOpt->Body = "";
 		}
-
-		// "delete"
-		$oListOpt = &$this->ListOptions->Items["delete"];
-		if (TRUE)
-			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
-		else
-			$oListOpt->Body = "";
 
 		// Set up list action buttons
 		$oListOpt = &$this->ListOptions->GetItem("listactions");
@@ -1110,6 +1089,11 @@ class cadministrador_list extends cadministrador {
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . ew_HtmlTitle($Language->Phrase("AddLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("AddLink")) . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
 		$item->Visible = ($this->AddUrl <> "");
 		$option = $options["action"];
+
+		// Add multi delete
+		$item = &$option->Add("multidelete");
+		$item->Body = "<a class=\"ewAction ewMultiDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" href=\"\" onclick=\"ew_SubmitAction(event,{f:document.fadministradorlist,url:'" . $this->MultiDeleteUrl . "'});return false;\">" . $Language->Phrase("DeleteSelectedLink") . "</a>";
+		$item->Visible = (TRUE);
 
 		// Set up options default
 		foreach ($options as &$option) {
@@ -1433,7 +1417,6 @@ class cadministrador_list extends cadministrador {
 		$this->ci->setDbValue($rs->fields('ci'));
 		$this->nombre->setDbValue($rs->fields('nombre'));
 		$this->cargo->setDbValue($rs->fields('cargo'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -1444,7 +1427,6 @@ class cadministrador_list extends cadministrador {
 		$this->ci->DbValue = $row['ci'];
 		$this->nombre->DbValue = $row['nombre'];
 		$this->cargo->DbValue = $row['cargo'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Load old record
@@ -1490,7 +1472,6 @@ class cadministrador_list extends cadministrador {
 		// ci
 		// nombre
 		// cargo
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1509,10 +1490,6 @@ class cadministrador_list extends cadministrador {
 		// cargo
 		$this->cargo->ViewValue = $this->cargo->CurrentValue;
 		$this->cargo->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
 
 			// id
 			$this->id->LinkCustomAttributes = "";
@@ -1533,11 +1510,6 @@ class cadministrador_list extends cadministrador {
 			$this->cargo->LinkCustomAttributes = "";
 			$this->cargo->HrefValue = "";
 			$this->cargo->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1863,7 +1835,7 @@ while ($administrador_list->RecCnt < $administrador_list->StopRec) {
 <?php if ($administrador->Export <> "" || $administrador->SortUrl($administrador->id) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $administrador->id->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $administrador->SortUrl($administrador->id) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $administrador->SortUrl($administrador->id) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $administrador->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($administrador->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($administrador->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1894,7 +1866,7 @@ while ($administrador_list->RecCnt < $administrador_list->StopRec) {
 <?php if ($administrador->Export <> "" || $administrador->SortUrl($administrador->ci) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $administrador->ci->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $administrador->SortUrl($administrador->ci) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $administrador->SortUrl($administrador->ci) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $administrador->ci->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($administrador->ci->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($administrador->ci->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1925,7 +1897,7 @@ while ($administrador_list->RecCnt < $administrador_list->StopRec) {
 <?php if ($administrador->Export <> "" || $administrador->SortUrl($administrador->nombre) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $administrador->nombre->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $administrador->SortUrl($administrador->nombre) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $administrador->SortUrl($administrador->nombre) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $administrador->nombre->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($administrador->nombre->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($administrador->nombre->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1956,7 +1928,7 @@ while ($administrador_list->RecCnt < $administrador_list->StopRec) {
 <?php if ($administrador->Export <> "" || $administrador->SortUrl($administrador->cargo) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $administrador->cargo->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $administrador->SortUrl($administrador->cargo) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $administrador->SortUrl($administrador->cargo) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $administrador->cargo->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($administrador->cargo->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($administrador->cargo->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1975,37 +1947,6 @@ while ($administrador_list->RecCnt < $administrador_list->StopRec) {
 <span id="el<?php echo $administrador_list->RowCnt ?>_administrador_cargo">
 <span<?php echo $administrador->cargo->ViewAttributes() ?>>
 <?php echo $administrador->cargo->ListViewValue() ?></span>
-</span>
-</div></div>
-		</div>
-		<?php } ?>
-	<?php } ?>
-	<?php if ($administrador->empresa->Visible) { // empresa ?>
-		<?php if ($administrador->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-		<tr>
-			<td class="ewTableHeader"><span class="administrador_empresa">
-<?php if ($administrador->Export <> "" || $administrador->SortUrl($administrador->empresa) == "") { ?>
-				<div class="ewTableHeaderCaption"><?php echo $administrador->empresa->FldCaption() ?></div>
-<?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $administrador->SortUrl($administrador->empresa) ?>',1);">
-            	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $administrador->empresa->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($administrador->empresa->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($administrador->empresa->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-				</div>
-<?php } ?>
-			</span></td>
-			<td<?php echo $administrador->empresa->CellAttributes() ?>>
-<span id="el<?php echo $administrador_list->RowCnt ?>_administrador_empresa">
-<span<?php echo $administrador->empresa->ViewAttributes() ?>>
-<?php echo $administrador->empresa->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-		<?php } else { // Add/edit record ?>
-		<div class="form-group administrador_empresa">
-			<label class="col-sm-2 control-label ewLabel"><?php echo $administrador->empresa->FldCaption() ?></label>
-			<div class="col-sm-10"><div<?php echo $administrador->empresa->CellAttributes() ?>>
-<span id="el<?php echo $administrador_list->RowCnt ?>_administrador_empresa">
-<span<?php echo $administrador->empresa->ViewAttributes() ?>>
-<?php echo $administrador->empresa->ListViewValue() ?></span>
 </span>
 </div></div>
 		</div>
@@ -2094,8 +2035,8 @@ if ($administrador_list->Recordset)
 <div class="ewPager">
 <input type="hidden" name="t" value="administrador">
 <select name="<?php echo EW_TABLE_REC_PER_PAGE ?>" class="form-control input-sm" onchange="this.form.submit();">
+<option value="10"<?php if ($administrador_list->DisplayRecs == 10) { ?> selected<?php } ?>>10</option>
 <option value="20"<?php if ($administrador_list->DisplayRecs == 20) { ?> selected<?php } ?>>20</option>
-<option value="ALL"<?php if ($administrador->getRecordsPerPage() == -1) { ?> selected<?php } ?>><?php echo $Language->Phrase("AllRecords") ?></option>
 </select>
 </div>
 <?php } ?>

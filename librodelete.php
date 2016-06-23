@@ -425,7 +425,6 @@ class clibro_delete extends clibro {
 		$this->titulo->setDbValue($rs->fields('titulo'));
 		$this->aF1o->setDbValue($rs->fields('año'));
 		$this->cantidad->setDbValue($rs->fields('cantidad'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -437,7 +436,6 @@ class clibro_delete extends clibro {
 		$this->titulo->DbValue = $row['titulo'];
 		$this->aF1o->DbValue = $row['año'];
 		$this->cantidad->DbValue = $row['cantidad'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Render row values based on field settings
@@ -455,7 +453,6 @@ class clibro_delete extends clibro {
 		// titulo
 		// año
 		// cantidad
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -478,10 +475,6 @@ class clibro_delete extends clibro {
 		// cantidad
 		$this->cantidad->ViewValue = $this->cantidad->CurrentValue;
 		$this->cantidad->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
 
 			// id
 			$this->id->LinkCustomAttributes = "";
@@ -507,11 +500,6 @@ class clibro_delete extends clibro {
 			$this->cantidad->LinkCustomAttributes = "";
 			$this->cantidad->HrefValue = "";
 			$this->cantidad->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -757,9 +745,6 @@ $libro_delete->ShowMessage();
 <?php if ($libro->cantidad->Visible) { // cantidad ?>
 		<th><span id="elh_libro_cantidad" class="libro_cantidad"><?php echo $libro->cantidad->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($libro->empresa->Visible) { // empresa ?>
-		<th><span id="elh_libro_empresa" class="libro_empresa"><?php echo $libro->empresa->FldCaption() ?></span></th>
-<?php } ?>
 	</tr>
 	</thead>
 	<tbody>
@@ -818,14 +803,6 @@ while (!$libro_delete->Recordset->EOF) {
 <span id="el<?php echo $libro_delete->RowCnt ?>_libro_cantidad" class="libro_cantidad">
 <span<?php echo $libro->cantidad->ViewAttributes() ?>>
 <?php echo $libro->cantidad->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($libro->empresa->Visible) { // empresa ?>
-		<td<?php echo $libro->empresa->CellAttributes() ?>>
-<span id="el<?php echo $libro_delete->RowCnt ?>_libro_empresa" class="libro_empresa">
-<span<?php echo $libro->empresa->ViewAttributes() ?>>
-<?php echo $libro->empresa->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

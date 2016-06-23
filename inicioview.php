@@ -5,7 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg12.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql12.php") ?>
 <?php include_once "phpfn12.php" ?>
-<?php include_once "pedidoinfo.php" ?>
+<?php include_once "inicioinfo.php" ?>
 <?php include_once "userfn12.php" ?>
 <?php
 
@@ -13,9 +13,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$pedido_view = NULL; // Initialize page object first
+$inicio_view = NULL; // Initialize page object first
 
-class cpedido_view extends cpedido {
+class cinicio_view extends cinicio {
 
 	// Page ID
 	var $PageID = 'view';
@@ -24,10 +24,10 @@ class cpedido_view extends cpedido {
 	var $ProjectID = "{2604CCF7-311F-415E-9E95-9937AECA0470}";
 
 	// Table name
-	var $TableName = 'pedido';
+	var $TableName = 'inicio';
 
 	// Page object name
-	var $PageObjName = 'pedido_view';
+	var $PageObjName = 'inicio_view';
 
 	// Page name
 	function PageName() {
@@ -252,10 +252,10 @@ class cpedido_view extends cpedido {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (pedido)
-		if (!isset($GLOBALS["pedido"]) || get_class($GLOBALS["pedido"]) == "cpedido") {
-			$GLOBALS["pedido"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["pedido"];
+		// Table object (inicio)
+		if (!isset($GLOBALS["inicio"]) || get_class($GLOBALS["inicio"]) == "cinicio") {
+			$GLOBALS["inicio"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["inicio"];
 		}
 		$KeyUrl = "";
 		if (@$_GET["id"] <> "") {
@@ -276,7 +276,7 @@ class cpedido_view extends cpedido {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 'pedido', TRUE);
+			define("EW_TABLE_NAME", 'inicio', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -336,13 +336,13 @@ class cpedido_view extends cpedido {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $pedido;
+		global $EW_EXPORT, $inicio;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($pedido);
+				$doc = new $class($inicio);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -397,7 +397,7 @@ class cpedido_view extends cpedido {
 				$this->id->setFormValue($_POST["id"]);
 				$this->RecKey["id"] = $this->id->FormValue;
 			} else {
-				$sReturnUrl = "pedidolist.php"; // Return to list
+				$sReturnUrl = "iniciolist.php"; // Return to list
 			}
 
 			// Get action
@@ -407,11 +407,11 @@ class cpedido_view extends cpedido {
 					if (!$this->LoadRow()) { // Load record based on key
 						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
 							$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-						$sReturnUrl = "pedidolist.php"; // No matching record, return to list
+						$sReturnUrl = "iniciolist.php"; // No matching record, return to list
 					}
 			}
 		} else {
-			$sReturnUrl = "pedidolist.php"; // Not page request, return to list
+			$sReturnUrl = "iniciolist.php"; // Not page request, return to list
 		}
 		if ($sReturnUrl <> "")
 			$this->Page_Terminate($sReturnUrl);
@@ -525,9 +525,6 @@ class cpedido_view extends cpedido {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->empleado->setDbValue($rs->fields('empleado'));
-		$this->fecha->setDbValue($rs->fields('fecha'));
-		$this->cliente->setDbValue($rs->fields('cliente'));
 	}
 
 	// Load DbValue from recordset
@@ -535,9 +532,6 @@ class cpedido_view extends cpedido {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->empleado->DbValue = $row['empleado'];
-		$this->fecha->DbValue = $row['fecha'];
-		$this->cliente->DbValue = $row['cliente'];
 	}
 
 	// Render row values based on field settings
@@ -557,9 +551,6 @@ class cpedido_view extends cpedido {
 
 		// Common render codes for all row types
 		// id
-		// empleado
-		// fecha
-		// cliente
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -567,38 +558,10 @@ class cpedido_view extends cpedido {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// empleado
-		$this->empleado->ViewValue = $this->empleado->CurrentValue;
-		$this->empleado->ViewCustomAttributes = "";
-
-		// fecha
-		$this->fecha->ViewValue = $this->fecha->CurrentValue;
-		$this->fecha->ViewValue = ew_FormatDateTime($this->fecha->ViewValue, 7);
-		$this->fecha->ViewCustomAttributes = "";
-
-		// cliente
-		$this->cliente->ViewValue = $this->cliente->CurrentValue;
-		$this->cliente->ViewCustomAttributes = "";
-
 			// id
 			$this->id->LinkCustomAttributes = "";
 			$this->id->HrefValue = "";
 			$this->id->TooltipValue = "";
-
-			// empleado
-			$this->empleado->LinkCustomAttributes = "";
-			$this->empleado->HrefValue = "";
-			$this->empleado->TooltipValue = "";
-
-			// fecha
-			$this->fecha->LinkCustomAttributes = "";
-			$this->fecha->HrefValue = "";
-			$this->fecha->TooltipValue = "";
-
-			// cliente
-			$this->cliente->LinkCustomAttributes = "";
-			$this->cliente->HrefValue = "";
-			$this->cliente->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -611,7 +574,7 @@ class cpedido_view extends cpedido {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("pedidolist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("iniciolist.php"), "", $this->TableVar, TRUE);
 		$PageId = "view";
 		$Breadcrumb->Add("view", $PageId, $url);
 	}
@@ -707,29 +670,29 @@ class cpedido_view extends cpedido {
 <?php
 
 // Create page object
-if (!isset($pedido_view)) $pedido_view = new cpedido_view();
+if (!isset($inicio_view)) $inicio_view = new cinicio_view();
 
 // Page init
-$pedido_view->Page_Init();
+$inicio_view->Page_Init();
 
 // Page main
-$pedido_view->Page_Main();
+$inicio_view->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$pedido_view->Page_Render();
+$inicio_view->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "view";
-var CurrentForm = fpedidoview = new ew_Form("fpedidoview", "view");
+var CurrentForm = finicioview = new ew_Form("finicioview", "view");
 
 // Form_CustomValidate event
-fpedidoview.Form_CustomValidate = 
+finicioview.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -738,9 +701,9 @@ fpedidoview.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-fpedidoview.ValidateRequired = true;
+finicioview.ValidateRequired = true;
 <?php } else { ?>
-fpedidoview.ValidateRequired = false; 
+finicioview.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
@@ -753,64 +716,31 @@ fpedidoview.ValidateRequired = false;
 </script>
 <div class="ewToolbar">
 <?php $Breadcrumb->Render(); ?>
-<?php $pedido_view->ExportOptions->Render("body") ?>
+<?php $inicio_view->ExportOptions->Render("body") ?>
 <?php
-	foreach ($pedido_view->OtherOptions as &$option)
+	foreach ($inicio_view->OtherOptions as &$option)
 		$option->Render("body");
 ?>
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
-<?php $pedido_view->ShowPageHeader(); ?>
+<?php $inicio_view->ShowPageHeader(); ?>
 <?php
-$pedido_view->ShowMessage();
+$inicio_view->ShowMessage();
 ?>
-<form name="fpedidoview" id="fpedidoview" class="form-inline ewForm ewViewForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($pedido_view->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $pedido_view->Token ?>">
+<form name="finicioview" id="finicioview" class="form-inline ewForm ewViewForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($inicio_view->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $inicio_view->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="pedido">
+<input type="hidden" name="t" value="inicio">
 <table class="table table-bordered table-striped ewViewTable">
-<?php if ($pedido->id->Visible) { // id ?>
+<?php if ($inicio->id->Visible) { // id ?>
 	<tr id="r_id">
-		<td><span id="elh_pedido_id"><?php echo $pedido->id->FldCaption() ?></span></td>
-		<td data-name="id"<?php echo $pedido->id->CellAttributes() ?>>
-<span id="el_pedido_id">
-<span<?php echo $pedido->id->ViewAttributes() ?>>
-<?php echo $pedido->id->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($pedido->empleado->Visible) { // empleado ?>
-	<tr id="r_empleado">
-		<td><span id="elh_pedido_empleado"><?php echo $pedido->empleado->FldCaption() ?></span></td>
-		<td data-name="empleado"<?php echo $pedido->empleado->CellAttributes() ?>>
-<span id="el_pedido_empleado">
-<span<?php echo $pedido->empleado->ViewAttributes() ?>>
-<?php echo $pedido->empleado->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($pedido->fecha->Visible) { // fecha ?>
-	<tr id="r_fecha">
-		<td><span id="elh_pedido_fecha"><?php echo $pedido->fecha->FldCaption() ?></span></td>
-		<td data-name="fecha"<?php echo $pedido->fecha->CellAttributes() ?>>
-<span id="el_pedido_fecha">
-<span<?php echo $pedido->fecha->ViewAttributes() ?>>
-<?php echo $pedido->fecha->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($pedido->cliente->Visible) { // cliente ?>
-	<tr id="r_cliente">
-		<td><span id="elh_pedido_cliente"><?php echo $pedido->cliente->FldCaption() ?></span></td>
-		<td data-name="cliente"<?php echo $pedido->cliente->CellAttributes() ?>>
-<span id="el_pedido_cliente">
-<span<?php echo $pedido->cliente->ViewAttributes() ?>>
-<?php echo $pedido->cliente->ViewValue ?></span>
+		<td><span id="elh_inicio_id"><?php echo $inicio->id->FldCaption() ?></span></td>
+		<td data-name="id"<?php echo $inicio->id->CellAttributes() ?>>
+<span id="el_inicio_id">
+<span<?php echo $inicio->id->ViewAttributes() ?>>
+<?php echo $inicio->id->ViewValue ?></span>
 </span>
 </td>
 	</tr>
@@ -818,10 +748,10 @@ $pedido_view->ShowMessage();
 </table>
 </form>
 <script type="text/javascript">
-fpedidoview.Init();
+finicioview.Init();
 </script>
 <?php
-$pedido_view->ShowPageFooter();
+$inicio_view->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -833,5 +763,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$pedido_view->Page_Terminate();
+$inicio_view->Page_Terminate();
 ?>

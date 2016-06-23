@@ -424,7 +424,6 @@ class cdevolucion_delete extends cdevolucion {
 		$this->empleado->setDbValue($rs->fields('empleado'));
 		$this->fecha->setDbValue($rs->fields('fecha'));
 		$this->cliente->setDbValue($rs->fields('cliente'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -435,7 +434,6 @@ class cdevolucion_delete extends cdevolucion {
 		$this->empleado->DbValue = $row['empleado'];
 		$this->fecha->DbValue = $row['fecha'];
 		$this->cliente->DbValue = $row['cliente'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Render row values based on field settings
@@ -452,7 +450,6 @@ class cdevolucion_delete extends cdevolucion {
 		// empleado
 		// fecha
 		// cliente
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -471,10 +468,6 @@ class cdevolucion_delete extends cdevolucion {
 		// cliente
 		$this->cliente->ViewValue = $this->cliente->CurrentValue;
 		$this->cliente->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
 
 			// id
 			$this->id->LinkCustomAttributes = "";
@@ -495,11 +488,6 @@ class cdevolucion_delete extends cdevolucion {
 			$this->cliente->LinkCustomAttributes = "";
 			$this->cliente->HrefValue = "";
 			$this->cliente->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -742,9 +730,6 @@ $devolucion_delete->ShowMessage();
 <?php if ($devolucion->cliente->Visible) { // cliente ?>
 		<th><span id="elh_devolucion_cliente" class="devolucion_cliente"><?php echo $devolucion->cliente->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($devolucion->empresa->Visible) { // empresa ?>
-		<th><span id="elh_devolucion_empresa" class="devolucion_empresa"><?php echo $devolucion->empresa->FldCaption() ?></span></th>
-<?php } ?>
 	</tr>
 	</thead>
 	<tbody>
@@ -795,14 +780,6 @@ while (!$devolucion_delete->Recordset->EOF) {
 <span id="el<?php echo $devolucion_delete->RowCnt ?>_devolucion_cliente" class="devolucion_cliente">
 <span<?php echo $devolucion->cliente->ViewAttributes() ?>>
 <?php echo $devolucion->cliente->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($devolucion->empresa->Visible) { // empresa ?>
-		<td<?php echo $devolucion->empresa->CellAttributes() ?>>
-<span id="el<?php echo $devolucion_delete->RowCnt ?>_devolucion_empresa" class="devolucion_empresa">
-<span<?php echo $devolucion->empresa->ViewAttributes() ?>>
-<?php echo $devolucion->empresa->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

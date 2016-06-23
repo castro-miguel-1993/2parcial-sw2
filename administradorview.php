@@ -528,7 +528,6 @@ class cadministrador_view extends cadministrador {
 		$this->ci->setDbValue($rs->fields('ci'));
 		$this->nombre->setDbValue($rs->fields('nombre'));
 		$this->cargo->setDbValue($rs->fields('cargo'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -539,7 +538,6 @@ class cadministrador_view extends cadministrador {
 		$this->ci->DbValue = $row['ci'];
 		$this->nombre->DbValue = $row['nombre'];
 		$this->cargo->DbValue = $row['cargo'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Render row values based on field settings
@@ -562,7 +560,6 @@ class cadministrador_view extends cadministrador {
 		// ci
 		// nombre
 		// cargo
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -581,10 +578,6 @@ class cadministrador_view extends cadministrador {
 		// cargo
 		$this->cargo->ViewValue = $this->cargo->CurrentValue;
 		$this->cargo->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
 
 			// id
 			$this->id->LinkCustomAttributes = "";
@@ -605,11 +598,6 @@ class cadministrador_view extends cadministrador {
 			$this->cargo->LinkCustomAttributes = "";
 			$this->cargo->HrefValue = "";
 			$this->cargo->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -822,17 +810,6 @@ $administrador_view->ShowMessage();
 <span id="el_administrador_cargo">
 <span<?php echo $administrador->cargo->ViewAttributes() ?>>
 <?php echo $administrador->cargo->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($administrador->empresa->Visible) { // empresa ?>
-	<tr id="r_empresa">
-		<td><span id="elh_administrador_empresa"><?php echo $administrador->empresa->FldCaption() ?></span></td>
-		<td data-name="empresa"<?php echo $administrador->empresa->CellAttributes() ?>>
-<span id="el_administrador_empresa">
-<span<?php echo $administrador->empresa->ViewAttributes() ?>>
-<?php echo $administrador->empresa->ViewValue ?></span>
 </span>
 </td>
 	</tr>

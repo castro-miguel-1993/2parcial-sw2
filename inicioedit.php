@@ -5,7 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg12.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql12.php") ?>
 <?php include_once "phpfn12.php" ?>
-<?php include_once "detalleinfo.php" ?>
+<?php include_once "inicioinfo.php" ?>
 <?php include_once "userfn12.php" ?>
 <?php
 
@@ -13,9 +13,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$detalle_edit = NULL; // Initialize page object first
+$inicio_edit = NULL; // Initialize page object first
 
-class cdetalle_edit extends cdetalle {
+class cinicio_edit extends cinicio {
 
 	// Page ID
 	var $PageID = 'edit';
@@ -24,10 +24,10 @@ class cdetalle_edit extends cdetalle {
 	var $ProjectID = "{2604CCF7-311F-415E-9E95-9937AECA0470}";
 
 	// Table name
-	var $TableName = 'detalle';
+	var $TableName = 'inicio';
 
 	// Page object name
-	var $PageObjName = 'detalle_edit';
+	var $PageObjName = 'inicio_edit';
 
 	// Page name
 	function PageName() {
@@ -220,10 +220,10 @@ class cdetalle_edit extends cdetalle {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (detalle)
-		if (!isset($GLOBALS["detalle"]) || get_class($GLOBALS["detalle"]) == "cdetalle") {
-			$GLOBALS["detalle"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["detalle"];
+		// Table object (inicio)
+		if (!isset($GLOBALS["inicio"]) || get_class($GLOBALS["inicio"]) == "cinicio") {
+			$GLOBALS["inicio"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["inicio"];
 		}
 
 		// Page ID
@@ -232,7 +232,7 @@ class cdetalle_edit extends cdetalle {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 'detalle', TRUE);
+			define("EW_TABLE_NAME", 'inicio', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -296,13 +296,13 @@ class cdetalle_edit extends cdetalle {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $detalle;
+		global $EW_EXPORT, $inicio;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($detalle);
+				$doc = new $class($inicio);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -353,7 +353,7 @@ class cdetalle_edit extends cdetalle {
 
 		// Check if valid key
 		if ($this->id->CurrentValue == "")
-			$this->Page_Terminate("detallelist.php"); // Invalid key, return to list
+			$this->Page_Terminate("iniciolist.php"); // Invalid key, return to list
 
 		// Validate form if post back
 		if (@$_POST["a_edit"] <> "") {
@@ -368,12 +368,12 @@ class cdetalle_edit extends cdetalle {
 			case "I": // Get a record to display
 				if (!$this->LoadRow()) { // Load record based on key
 					if ($this->getFailureMessage() == "") $this->setFailureMessage($Language->Phrase("NoRecord")); // No record found
-					$this->Page_Terminate("detallelist.php"); // No matching record, return to list
+					$this->Page_Terminate("iniciolist.php"); // No matching record, return to list
 				}
 				break;
 			Case "U": // Update
 				$sReturnUrl = $this->getReturnUrl();
-				if (ew_GetPageName($sReturnUrl) == "detallelist.php")
+				if (ew_GetPageName($sReturnUrl) == "iniciolist.php")
 					$sReturnUrl = $this->AddMasterUrl($sReturnUrl); // List page, return to list page with correct master key if necessary
 				$this->SendEmail = TRUE; // Send email on update success
 				if ($this->EditRow()) { // Update record based on key
@@ -444,12 +444,6 @@ class cdetalle_edit extends cdetalle {
 		global $objForm;
 		if (!$this->id->FldIsDetailKey)
 			$this->id->setFormValue($objForm->GetValue("x_id"));
-		if (!$this->pedido->FldIsDetailKey) {
-			$this->pedido->setFormValue($objForm->GetValue("x_pedido"));
-		}
-		if (!$this->libro->FldIsDetailKey) {
-			$this->libro->setFormValue($objForm->GetValue("x_libro"));
-		}
 	}
 
 	// Restore form values
@@ -457,8 +451,6 @@ class cdetalle_edit extends cdetalle {
 		global $objForm;
 		$this->LoadRow();
 		$this->id->CurrentValue = $this->id->FormValue;
-		$this->pedido->CurrentValue = $this->pedido->FormValue;
-		$this->libro->CurrentValue = $this->libro->FormValue;
 	}
 
 	// Load row based on key values
@@ -491,8 +483,6 @@ class cdetalle_edit extends cdetalle {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->pedido->setDbValue($rs->fields('pedido'));
-		$this->libro->setDbValue($rs->fields('libro'));
 	}
 
 	// Load DbValue from recordset
@@ -500,8 +490,6 @@ class cdetalle_edit extends cdetalle {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->pedido->DbValue = $row['pedido'];
-		$this->libro->DbValue = $row['libro'];
 	}
 
 	// Render row values based on field settings
@@ -515,8 +503,6 @@ class cdetalle_edit extends cdetalle {
 
 		// Common render codes for all row types
 		// id
-		// pedido
-		// libro
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -524,28 +510,10 @@ class cdetalle_edit extends cdetalle {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// pedido
-		$this->pedido->ViewValue = $this->pedido->CurrentValue;
-		$this->pedido->ViewCustomAttributes = "";
-
-		// libro
-		$this->libro->ViewValue = $this->libro->CurrentValue;
-		$this->libro->ViewCustomAttributes = "";
-
 			// id
 			$this->id->LinkCustomAttributes = "";
 			$this->id->HrefValue = "";
 			$this->id->TooltipValue = "";
-
-			// pedido
-			$this->pedido->LinkCustomAttributes = "";
-			$this->pedido->HrefValue = "";
-			$this->pedido->TooltipValue = "";
-
-			// libro
-			$this->libro->LinkCustomAttributes = "";
-			$this->libro->HrefValue = "";
-			$this->libro->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
 			// id
@@ -554,31 +522,11 @@ class cdetalle_edit extends cdetalle {
 			$this->id->EditValue = $this->id->CurrentValue;
 			$this->id->ViewCustomAttributes = "";
 
-			// pedido
-			$this->pedido->EditAttrs["class"] = "form-control";
-			$this->pedido->EditCustomAttributes = "";
-			$this->pedido->EditValue = ew_HtmlEncode($this->pedido->CurrentValue);
-			$this->pedido->PlaceHolder = ew_RemoveHtml($this->pedido->FldCaption());
-
-			// libro
-			$this->libro->EditAttrs["class"] = "form-control";
-			$this->libro->EditCustomAttributes = "";
-			$this->libro->EditValue = ew_HtmlEncode($this->libro->CurrentValue);
-			$this->libro->PlaceHolder = ew_RemoveHtml($this->libro->FldCaption());
-
 			// Edit refer script
 			// id
 
 			$this->id->LinkCustomAttributes = "";
 			$this->id->HrefValue = "";
-
-			// pedido
-			$this->pedido->LinkCustomAttributes = "";
-			$this->pedido->HrefValue = "";
-
-			// libro
-			$this->libro->LinkCustomAttributes = "";
-			$this->libro->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -601,18 +549,6 @@ class cdetalle_edit extends cdetalle {
 		// Check if validation required
 		if (!EW_SERVER_VALIDATE)
 			return ($gsFormError == "");
-		if (!$this->pedido->FldIsDetailKey && !is_null($this->pedido->FormValue) && $this->pedido->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->pedido->FldCaption(), $this->pedido->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->pedido->FormValue)) {
-			ew_AddMessage($gsFormError, $this->pedido->FldErrMsg());
-		}
-		if (!$this->libro->FldIsDetailKey && !is_null($this->libro->FormValue) && $this->libro->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->libro->FldCaption(), $this->libro->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->libro->FormValue)) {
-			ew_AddMessage($gsFormError, $this->libro->FldErrMsg());
-		}
 
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
@@ -648,12 +584,6 @@ class cdetalle_edit extends cdetalle {
 			$rsold = &$rs->fields;
 			$this->LoadDbValues($rsold);
 			$rsnew = array();
-
-			// pedido
-			$this->pedido->SetDbValueDef($rsnew, $this->pedido->CurrentValue, 0, $this->pedido->ReadOnly);
-
-			// libro
-			$this->libro->SetDbValueDef($rsnew, $this->libro->CurrentValue, 0, $this->libro->ReadOnly);
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -692,7 +622,7 @@ class cdetalle_edit extends cdetalle {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("detallelist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("iniciolist.php"), "", $this->TableVar, TRUE);
 		$PageId = "edit";
 		$Breadcrumb->Add("edit", $PageId, $url);
 	}
@@ -769,29 +699,29 @@ class cdetalle_edit extends cdetalle {
 <?php
 
 // Create page object
-if (!isset($detalle_edit)) $detalle_edit = new cdetalle_edit();
+if (!isset($inicio_edit)) $inicio_edit = new cinicio_edit();
 
 // Page init
-$detalle_edit->Page_Init();
+$inicio_edit->Page_Init();
 
 // Page main
-$detalle_edit->Page_Main();
+$inicio_edit->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$detalle_edit->Page_Render();
+$inicio_edit->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "edit";
-var CurrentForm = fdetalleedit = new ew_Form("fdetalleedit", "edit");
+var CurrentForm = finicioedit = new ew_Form("finicioedit", "edit");
 
 // Validate form
-fdetalleedit.Validate = function() {
+finicioedit.Validate = function() {
 	if (!this.ValidateRequired)
 		return true; // Ignore validation
 	var $ = jQuery, fobj = this.GetForm(), $fobj = $(fobj);
@@ -805,18 +735,6 @@ fdetalleedit.Validate = function() {
 	for (var i = startcnt; i <= rowcnt; i++) {
 		var infix = ($k[0]) ? String(i) : "";
 		$fobj.data("rowindex", infix);
-			elm = this.GetElements("x" + infix + "_pedido");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $detalle->pedido->FldCaption(), $detalle->pedido->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_pedido");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($detalle->pedido->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_libro");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $detalle->libro->FldCaption(), $detalle->libro->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_libro");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($detalle->libro->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -835,7 +753,7 @@ fdetalleedit.Validate = function() {
 }
 
 // Form_CustomValidate event
-fdetalleedit.Form_CustomValidate = 
+finicioedit.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -844,9 +762,9 @@ fdetalleedit.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-fdetalleedit.ValidateRequired = true;
+finicioedit.ValidateRequired = true;
 <?php } else { ?>
-fdetalleedit.ValidateRequired = false; 
+finicioedit.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
@@ -862,62 +780,42 @@ fdetalleedit.ValidateRequired = false;
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
-<?php $detalle_edit->ShowPageHeader(); ?>
+<?php $inicio_edit->ShowPageHeader(); ?>
 <?php
-$detalle_edit->ShowMessage();
+$inicio_edit->ShowMessage();
 ?>
-<form name="fdetalleedit" id="fdetalleedit" class="<?php echo $detalle_edit->FormClassName ?>" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($detalle_edit->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $detalle_edit->Token ?>">
+<form name="finicioedit" id="finicioedit" class="<?php echo $inicio_edit->FormClassName ?>" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($inicio_edit->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $inicio_edit->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="detalle">
+<input type="hidden" name="t" value="inicio">
 <input type="hidden" name="a_edit" id="a_edit" value="U">
 <div>
-<?php if ($detalle->id->Visible) { // id ?>
+<?php if ($inicio->id->Visible) { // id ?>
 	<div id="r_id" class="form-group">
-		<label id="elh_detalle_id" class="col-sm-2 control-label ewLabel"><?php echo $detalle->id->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $detalle->id->CellAttributes() ?>>
-<span id="el_detalle_id">
-<span<?php echo $detalle->id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $detalle->id->EditValue ?></p></span>
+		<label id="elh_inicio_id" class="col-sm-2 control-label ewLabel"><?php echo $inicio->id->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $inicio->id->CellAttributes() ?>>
+<span id="el_inicio_id">
+<span<?php echo $inicio->id->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $inicio->id->EditValue ?></p></span>
 </span>
-<input type="hidden" data-table="detalle" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($detalle->id->CurrentValue) ?>">
-<?php echo $detalle->id->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($detalle->pedido->Visible) { // pedido ?>
-	<div id="r_pedido" class="form-group">
-		<label id="elh_detalle_pedido" for="x_pedido" class="col-sm-2 control-label ewLabel"><?php echo $detalle->pedido->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $detalle->pedido->CellAttributes() ?>>
-<span id="el_detalle_pedido">
-<input type="text" data-table="detalle" data-field="x_pedido" name="x_pedido" id="x_pedido" size="30" placeholder="<?php echo ew_HtmlEncode($detalle->pedido->getPlaceHolder()) ?>" value="<?php echo $detalle->pedido->EditValue ?>"<?php echo $detalle->pedido->EditAttributes() ?>>
-</span>
-<?php echo $detalle->pedido->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($detalle->libro->Visible) { // libro ?>
-	<div id="r_libro" class="form-group">
-		<label id="elh_detalle_libro" for="x_libro" class="col-sm-2 control-label ewLabel"><?php echo $detalle->libro->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $detalle->libro->CellAttributes() ?>>
-<span id="el_detalle_libro">
-<input type="text" data-table="detalle" data-field="x_libro" name="x_libro" id="x_libro" size="30" placeholder="<?php echo ew_HtmlEncode($detalle->libro->getPlaceHolder()) ?>" value="<?php echo $detalle->libro->EditValue ?>"<?php echo $detalle->libro->EditAttributes() ?>>
-</span>
-<?php echo $detalle->libro->CustomMsg ?></div></div>
+<input type="hidden" data-table="inicio" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($inicio->id->CurrentValue) ?>">
+<?php echo $inicio->id->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>
 <div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">
 <button class="btn btn-primary ewButton" name="btnAction" id="btnAction" type="submit"><?php echo $Language->Phrase("SaveBtn") ?></button>
-<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $detalle_edit->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
+<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $inicio_edit->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 	</div>
 </div>
 </form>
 <script type="text/javascript">
-fdetalleedit.Init();
+finicioedit.Init();
 </script>
 <?php
-$detalle_edit->ShowPageFooter();
+$inicio_edit->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -929,5 +827,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$detalle_edit->Page_Terminate();
+$inicio_edit->Page_Terminate();
 ?>

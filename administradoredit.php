@@ -453,9 +453,6 @@ class cadministrador_edit extends cadministrador {
 		if (!$this->cargo->FldIsDetailKey) {
 			$this->cargo->setFormValue($objForm->GetValue("x_cargo"));
 		}
-		if (!$this->empresa->FldIsDetailKey) {
-			$this->empresa->setFormValue($objForm->GetValue("x_empresa"));
-		}
 	}
 
 	// Restore form values
@@ -466,7 +463,6 @@ class cadministrador_edit extends cadministrador {
 		$this->ci->CurrentValue = $this->ci->FormValue;
 		$this->nombre->CurrentValue = $this->nombre->FormValue;
 		$this->cargo->CurrentValue = $this->cargo->FormValue;
-		$this->empresa->CurrentValue = $this->empresa->FormValue;
 	}
 
 	// Load row based on key values
@@ -502,7 +498,6 @@ class cadministrador_edit extends cadministrador {
 		$this->ci->setDbValue($rs->fields('ci'));
 		$this->nombre->setDbValue($rs->fields('nombre'));
 		$this->cargo->setDbValue($rs->fields('cargo'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -513,7 +508,6 @@ class cadministrador_edit extends cadministrador {
 		$this->ci->DbValue = $row['ci'];
 		$this->nombre->DbValue = $row['nombre'];
 		$this->cargo->DbValue = $row['cargo'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Render row values based on field settings
@@ -530,7 +524,6 @@ class cadministrador_edit extends cadministrador {
 		// ci
 		// nombre
 		// cargo
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -549,10 +542,6 @@ class cadministrador_edit extends cadministrador {
 		// cargo
 		$this->cargo->ViewValue = $this->cargo->CurrentValue;
 		$this->cargo->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
 
 			// id
 			$this->id->LinkCustomAttributes = "";
@@ -573,11 +562,6 @@ class cadministrador_edit extends cadministrador {
 			$this->cargo->LinkCustomAttributes = "";
 			$this->cargo->HrefValue = "";
 			$this->cargo->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
 			// id
@@ -604,12 +588,6 @@ class cadministrador_edit extends cadministrador {
 			$this->cargo->EditValue = ew_HtmlEncode($this->cargo->CurrentValue);
 			$this->cargo->PlaceHolder = ew_RemoveHtml($this->cargo->FldCaption());
 
-			// empresa
-			$this->empresa->EditAttrs["class"] = "form-control";
-			$this->empresa->EditCustomAttributes = "";
-			$this->empresa->EditValue = ew_HtmlEncode($this->empresa->CurrentValue);
-			$this->empresa->PlaceHolder = ew_RemoveHtml($this->empresa->FldCaption());
-
 			// Edit refer script
 			// id
 
@@ -627,10 +605,6 @@ class cadministrador_edit extends cadministrador {
 			// cargo
 			$this->cargo->LinkCustomAttributes = "";
 			$this->cargo->HrefValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -664,12 +638,6 @@ class cadministrador_edit extends cadministrador {
 		}
 		if (!$this->cargo->FldIsDetailKey && !is_null($this->cargo->FormValue) && $this->cargo->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->cargo->FldCaption(), $this->cargo->ReqErrMsg));
-		}
-		if (!$this->empresa->FldIsDetailKey && !is_null($this->empresa->FormValue) && $this->empresa->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->empresa->FldCaption(), $this->empresa->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->empresa->FormValue)) {
-			ew_AddMessage($gsFormError, $this->empresa->FldErrMsg());
 		}
 
 		// Return validate result
@@ -715,9 +683,6 @@ class cadministrador_edit extends cadministrador {
 
 			// cargo
 			$this->cargo->SetDbValueDef($rsnew, $this->cargo->CurrentValue, "", $this->cargo->ReadOnly);
-
-			// empresa
-			$this->empresa->SetDbValueDef($rsnew, $this->empresa->CurrentValue, 0, $this->empresa->ReadOnly);
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -881,12 +846,6 @@ fadministradoredit.Validate = function() {
 			elm = this.GetElements("x" + infix + "_cargo");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $administrador->cargo->FldCaption(), $administrador->cargo->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_empresa");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $administrador->empresa->FldCaption(), $administrador->empresa->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_empresa");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($administrador->empresa->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -983,16 +942,6 @@ $administrador_edit->ShowMessage();
 <input type="text" data-table="administrador" data-field="x_cargo" name="x_cargo" id="x_cargo" size="30" maxlength="30" placeholder="<?php echo ew_HtmlEncode($administrador->cargo->getPlaceHolder()) ?>" value="<?php echo $administrador->cargo->EditValue ?>"<?php echo $administrador->cargo->EditAttributes() ?>>
 </span>
 <?php echo $administrador->cargo->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($administrador->empresa->Visible) { // empresa ?>
-	<div id="r_empresa" class="form-group">
-		<label id="elh_administrador_empresa" for="x_empresa" class="col-sm-2 control-label ewLabel"><?php echo $administrador->empresa->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $administrador->empresa->CellAttributes() ?>>
-<span id="el_administrador_empresa">
-<input type="text" data-table="administrador" data-field="x_empresa" name="x_empresa" id="x_empresa" size="30" placeholder="<?php echo ew_HtmlEncode($administrador->empresa->getPlaceHolder()) ?>" value="<?php echo $administrador->empresa->EditValue ?>"<?php echo $administrador->empresa->EditAttributes() ?>>
-</span>
-<?php echo $administrador->empresa->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

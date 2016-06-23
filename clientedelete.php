@@ -423,7 +423,6 @@ class ccliente_delete extends ccliente {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->nombre->setDbValue($rs->fields('nombre'));
 		$this->ci->setDbValue($rs->fields('ci'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -433,7 +432,6 @@ class ccliente_delete extends ccliente {
 		$this->id->DbValue = $row['id'];
 		$this->nombre->DbValue = $row['nombre'];
 		$this->ci->DbValue = $row['ci'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Render row values based on field settings
@@ -449,7 +447,6 @@ class ccliente_delete extends ccliente {
 		// id
 		// nombre
 		// ci
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -465,10 +462,6 @@ class ccliente_delete extends ccliente {
 		$this->ci->ViewValue = $this->ci->CurrentValue;
 		$this->ci->ViewCustomAttributes = "";
 
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
-
 			// id
 			$this->id->LinkCustomAttributes = "";
 			$this->id->HrefValue = "";
@@ -483,11 +476,6 @@ class ccliente_delete extends ccliente {
 			$this->ci->LinkCustomAttributes = "";
 			$this->ci->HrefValue = "";
 			$this->ci->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -727,9 +715,6 @@ $cliente_delete->ShowMessage();
 <?php if ($cliente->ci->Visible) { // ci ?>
 		<th><span id="elh_cliente_ci" class="cliente_ci"><?php echo $cliente->ci->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($cliente->empresa->Visible) { // empresa ?>
-		<th><span id="elh_cliente_empresa" class="cliente_empresa"><?php echo $cliente->empresa->FldCaption() ?></span></th>
-<?php } ?>
 	</tr>
 	</thead>
 	<tbody>
@@ -772,14 +757,6 @@ while (!$cliente_delete->Recordset->EOF) {
 <span id="el<?php echo $cliente_delete->RowCnt ?>_cliente_ci" class="cliente_ci">
 <span<?php echo $cliente->ci->ViewAttributes() ?>>
 <?php echo $cliente->ci->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($cliente->empresa->Visible) { // empresa ?>
-		<td<?php echo $cliente->empresa->CellAttributes() ?>>
-<span id="el<?php echo $cliente_delete->RowCnt ?>_cliente_empresa" class="cliente_empresa">
-<span<?php echo $cliente->empresa->ViewAttributes() ?>>
-<?php echo $cliente->empresa->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

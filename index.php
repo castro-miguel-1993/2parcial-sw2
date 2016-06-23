@@ -245,7 +245,7 @@ class cdefault {
 	//
 	function Page_Main() {
 		global $Security, $Language;
-		$this->Page_Terminate("clientelist.php"); // Exit and go to default page
+		$this->Page_Terminate("inicio.php"); // Exit and go to default page
 	}
 
 	// Page Load event

@@ -424,7 +424,6 @@ class cpedido_delete extends cpedido {
 		$this->empleado->setDbValue($rs->fields('empleado'));
 		$this->fecha->setDbValue($rs->fields('fecha'));
 		$this->cliente->setDbValue($rs->fields('cliente'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -435,7 +434,6 @@ class cpedido_delete extends cpedido {
 		$this->empleado->DbValue = $row['empleado'];
 		$this->fecha->DbValue = $row['fecha'];
 		$this->cliente->DbValue = $row['cliente'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Render row values based on field settings
@@ -452,7 +450,6 @@ class cpedido_delete extends cpedido {
 		// empleado
 		// fecha
 		// cliente
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -473,10 +470,6 @@ class cpedido_delete extends cpedido {
 		$this->cliente->ViewValue = $this->cliente->CurrentValue;
 		$this->cliente->ViewCustomAttributes = "";
 
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
-
 			// id
 			$this->id->LinkCustomAttributes = "";
 			$this->id->HrefValue = "";
@@ -496,11 +489,6 @@ class cpedido_delete extends cpedido {
 			$this->cliente->LinkCustomAttributes = "";
 			$this->cliente->HrefValue = "";
 			$this->cliente->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -743,9 +731,6 @@ $pedido_delete->ShowMessage();
 <?php if ($pedido->cliente->Visible) { // cliente ?>
 		<th><span id="elh_pedido_cliente" class="pedido_cliente"><?php echo $pedido->cliente->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($pedido->empresa->Visible) { // empresa ?>
-		<th><span id="elh_pedido_empresa" class="pedido_empresa"><?php echo $pedido->empresa->FldCaption() ?></span></th>
-<?php } ?>
 	</tr>
 	</thead>
 	<tbody>
@@ -796,14 +781,6 @@ while (!$pedido_delete->Recordset->EOF) {
 <span id="el<?php echo $pedido_delete->RowCnt ?>_pedido_cliente" class="pedido_cliente">
 <span<?php echo $pedido->cliente->ViewAttributes() ?>>
 <?php echo $pedido->cliente->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($pedido->empresa->Visible) { // empresa ?>
-		<td<?php echo $pedido->empresa->CellAttributes() ?>>
-<span id="el<?php echo $pedido_delete->RowCnt ?>_pedido_empresa" class="pedido_empresa">
-<span<?php echo $pedido->empresa->ViewAttributes() ?>>
-<?php echo $pedido->empresa->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

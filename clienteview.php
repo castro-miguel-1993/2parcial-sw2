@@ -527,7 +527,6 @@ class ccliente_view extends ccliente {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->nombre->setDbValue($rs->fields('nombre'));
 		$this->ci->setDbValue($rs->fields('ci'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -537,7 +536,6 @@ class ccliente_view extends ccliente {
 		$this->id->DbValue = $row['id'];
 		$this->nombre->DbValue = $row['nombre'];
 		$this->ci->DbValue = $row['ci'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Render row values based on field settings
@@ -559,7 +557,6 @@ class ccliente_view extends ccliente {
 		// id
 		// nombre
 		// ci
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -575,10 +572,6 @@ class ccliente_view extends ccliente {
 		$this->ci->ViewValue = $this->ci->CurrentValue;
 		$this->ci->ViewCustomAttributes = "";
 
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
-
 			// id
 			$this->id->LinkCustomAttributes = "";
 			$this->id->HrefValue = "";
@@ -593,11 +586,6 @@ class ccliente_view extends ccliente {
 			$this->ci->LinkCustomAttributes = "";
 			$this->ci->HrefValue = "";
 			$this->ci->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -799,17 +787,6 @@ $cliente_view->ShowMessage();
 <span id="el_cliente_ci">
 <span<?php echo $cliente->ci->ViewAttributes() ?>>
 <?php echo $cliente->ci->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($cliente->empresa->Visible) { // empresa ?>
-	<tr id="r_empresa">
-		<td><span id="elh_cliente_empresa"><?php echo $cliente->empresa->FldCaption() ?></span></td>
-		<td data-name="empresa"<?php echo $cliente->empresa->CellAttributes() ?>>
-<span id="el_cliente_empresa">
-<span<?php echo $cliente->empresa->ViewAttributes() ?>>
-<?php echo $cliente->empresa->ViewValue ?></span>
 </span>
 </td>
 	</tr>

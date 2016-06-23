@@ -479,8 +479,8 @@ class clibro_list extends clibro {
 		global $objForm, $Language, $gsFormError, $gsSearchError, $Security;
 
 		// Multi Column
-		$this->RecPerRow = 6;
-		$this->MultiColumnCnt = 2;
+		$this->RecPerRow = 1;
+		$this->MultiColumnCnt = 12;
 		$this->MultiColumnEditCnt = 12;
 
 		// Search filters
@@ -681,7 +681,6 @@ class clibro_list extends clibro {
 		$sFilterList = ew_Concat($sFilterList, $this->titulo->AdvancedSearch->ToJSON(), ","); // Field titulo
 		$sFilterList = ew_Concat($sFilterList, $this->aF1o->AdvancedSearch->ToJSON(), ","); // Field año
 		$sFilterList = ew_Concat($sFilterList, $this->cantidad->AdvancedSearch->ToJSON(), ","); // Field cantidad
-		$sFilterList = ew_Concat($sFilterList, $this->empresa->AdvancedSearch->ToJSON(), ","); // Field empresa
 		if ($this->BasicSearch->Keyword <> "") {
 			$sWrk = "\"" . EW_TABLE_BASIC_SEARCH . "\":\"" . ew_JsEncode2($this->BasicSearch->Keyword) . "\",\"" . EW_TABLE_BASIC_SEARCH_TYPE . "\":\"" . ew_JsEncode2($this->BasicSearch->Type) . "\"";
 			$sFilterList = ew_Concat($sFilterList, $sWrk, ",");
@@ -739,14 +738,6 @@ class clibro_list extends clibro {
 		$this->cantidad->AdvancedSearch->SearchValue2 = @$filter["y_cantidad"];
 		$this->cantidad->AdvancedSearch->SearchOperator2 = @$filter["w_cantidad"];
 		$this->cantidad->AdvancedSearch->Save();
-
-		// Field empresa
-		$this->empresa->AdvancedSearch->SearchValue = @$filter["x_empresa"];
-		$this->empresa->AdvancedSearch->SearchOperator = @$filter["z_empresa"];
-		$this->empresa->AdvancedSearch->SearchCondition = @$filter["v_empresa"];
-		$this->empresa->AdvancedSearch->SearchValue2 = @$filter["y_empresa"];
-		$this->empresa->AdvancedSearch->SearchOperator2 = @$filter["w_empresa"];
-		$this->empresa->AdvancedSearch->Save();
 		$this->BasicSearch->setKeyword(@$filter[EW_TABLE_BASIC_SEARCH]);
 		$this->BasicSearch->setType(@$filter[EW_TABLE_BASIC_SEARCH_TYPE]);
 	}
@@ -916,16 +907,18 @@ class clibro_list extends clibro {
 	// Set up sort parameters
 	function SetUpSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->id); // id
-			$this->UpdateSort($this->autor); // autor
-			$this->UpdateSort($this->titulo); // titulo
-			$this->UpdateSort($this->aF1o); // año
-			$this->UpdateSort($this->cantidad); // cantidad
-			$this->UpdateSort($this->empresa); // empresa
+			$this->UpdateSort($this->id, $bCtrl); // id
+			$this->UpdateSort($this->autor, $bCtrl); // autor
+			$this->UpdateSort($this->titulo, $bCtrl); // titulo
+			$this->UpdateSort($this->aF1o, $bCtrl); // año
+			$this->UpdateSort($this->cantidad, $bCtrl); // cantidad
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -963,7 +956,6 @@ class clibro_list extends clibro {
 				$this->titulo->setSort("");
 				$this->aF1o->setSort("");
 				$this->cantidad->setSort("");
-				$this->empresa->setSort("");
 			}
 
 			// Reset start position
@@ -1000,12 +992,6 @@ class clibro_list extends clibro {
 		$item->Visible = TRUE;
 		$item->OnLeft = FALSE;
 
-		// "delete"
-		$item = &$this->ListOptions->Add("delete");
-		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
-		$item->OnLeft = FALSE;
-
 		// List actions
 		$item = &$this->ListOptions->Add("listactions");
 		$item->CssStyle = "white-space: nowrap;";
@@ -1016,7 +1002,7 @@ class clibro_list extends clibro {
 
 		// "checkbox"
 		$item = &$this->ListOptions->Add("checkbox");
-		$item->Visible = FALSE;
+		$item->Visible = TRUE;
 		$item->OnLeft = FALSE;
 		$item->Header = "<input type=\"checkbox\" name=\"key\" id=\"key\" onclick=\"ew_SelectAllKey(this);\">";
 		$item->ShowInDropDown = FALSE;
@@ -1065,13 +1051,6 @@ class clibro_list extends clibro {
 		} else {
 			$oListOpt->Body = "";
 		}
-
-		// "delete"
-		$oListOpt = &$this->ListOptions->Items["delete"];
-		if (TRUE)
-			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
-		else
-			$oListOpt->Body = "";
 
 		// Set up list action buttons
 		$oListOpt = &$this->ListOptions->GetItem("listactions");
@@ -1122,6 +1101,11 @@ class clibro_list extends clibro {
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . ew_HtmlTitle($Language->Phrase("AddLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("AddLink")) . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
 		$item->Visible = ($this->AddUrl <> "");
 		$option = $options["action"];
+
+		// Add multi delete
+		$item = &$option->Add("multidelete");
+		$item->Body = "<a class=\"ewAction ewMultiDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" href=\"\" onclick=\"ew_SubmitAction(event,{f:document.flibrolist,url:'" . $this->MultiDeleteUrl . "'});return false;\">" . $Language->Phrase("DeleteSelectedLink") . "</a>";
+		$item->Visible = (TRUE);
 
 		// Set up options default
 		foreach ($options as &$option) {
@@ -1446,7 +1430,6 @@ class clibro_list extends clibro {
 		$this->titulo->setDbValue($rs->fields('titulo'));
 		$this->aF1o->setDbValue($rs->fields('año'));
 		$this->cantidad->setDbValue($rs->fields('cantidad'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -1458,7 +1441,6 @@ class clibro_list extends clibro {
 		$this->titulo->DbValue = $row['titulo'];
 		$this->aF1o->DbValue = $row['año'];
 		$this->cantidad->DbValue = $row['cantidad'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Load old record
@@ -1505,7 +1487,6 @@ class clibro_list extends clibro {
 		// titulo
 		// año
 		// cantidad
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1528,10 +1509,6 @@ class clibro_list extends clibro {
 		// cantidad
 		$this->cantidad->ViewValue = $this->cantidad->CurrentValue;
 		$this->cantidad->ViewCustomAttributes = "";
-
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
 
 			// id
 			$this->id->LinkCustomAttributes = "";
@@ -1557,11 +1534,6 @@ class clibro_list extends clibro {
 			$this->cantidad->LinkCustomAttributes = "";
 			$this->cantidad->HrefValue = "";
 			$this->cantidad->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1887,7 +1859,7 @@ while ($libro_list->RecCnt < $libro_list->StopRec) {
 <?php if ($libro->Export <> "" || $libro->SortUrl($libro->id) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $libro->id->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $libro->SortUrl($libro->id) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $libro->SortUrl($libro->id) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $libro->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($libro->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($libro->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1918,7 +1890,7 @@ while ($libro_list->RecCnt < $libro_list->StopRec) {
 <?php if ($libro->Export <> "" || $libro->SortUrl($libro->autor) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $libro->autor->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $libro->SortUrl($libro->autor) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $libro->SortUrl($libro->autor) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $libro->autor->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($libro->autor->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($libro->autor->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1949,7 +1921,7 @@ while ($libro_list->RecCnt < $libro_list->StopRec) {
 <?php if ($libro->Export <> "" || $libro->SortUrl($libro->titulo) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $libro->titulo->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $libro->SortUrl($libro->titulo) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $libro->SortUrl($libro->titulo) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $libro->titulo->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($libro->titulo->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($libro->titulo->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1980,7 +1952,7 @@ while ($libro_list->RecCnt < $libro_list->StopRec) {
 <?php if ($libro->Export <> "" || $libro->SortUrl($libro->aF1o) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $libro->aF1o->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $libro->SortUrl($libro->aF1o) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $libro->SortUrl($libro->aF1o) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $libro->aF1o->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($libro->aF1o->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($libro->aF1o->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -2011,7 +1983,7 @@ while ($libro_list->RecCnt < $libro_list->StopRec) {
 <?php if ($libro->Export <> "" || $libro->SortUrl($libro->cantidad) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $libro->cantidad->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $libro->SortUrl($libro->cantidad) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $libro->SortUrl($libro->cantidad) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $libro->cantidad->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($libro->cantidad->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($libro->cantidad->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -2030,37 +2002,6 @@ while ($libro_list->RecCnt < $libro_list->StopRec) {
 <span id="el<?php echo $libro_list->RowCnt ?>_libro_cantidad">
 <span<?php echo $libro->cantidad->ViewAttributes() ?>>
 <?php echo $libro->cantidad->ListViewValue() ?></span>
-</span>
-</div></div>
-		</div>
-		<?php } ?>
-	<?php } ?>
-	<?php if ($libro->empresa->Visible) { // empresa ?>
-		<?php if ($libro->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-		<tr>
-			<td class="ewTableHeader"><span class="libro_empresa">
-<?php if ($libro->Export <> "" || $libro->SortUrl($libro->empresa) == "") { ?>
-				<div class="ewTableHeaderCaption"><?php echo $libro->empresa->FldCaption() ?></div>
-<?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $libro->SortUrl($libro->empresa) ?>',1);">
-            	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $libro->empresa->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($libro->empresa->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($libro->empresa->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-				</div>
-<?php } ?>
-			</span></td>
-			<td<?php echo $libro->empresa->CellAttributes() ?>>
-<span id="el<?php echo $libro_list->RowCnt ?>_libro_empresa">
-<span<?php echo $libro->empresa->ViewAttributes() ?>>
-<?php echo $libro->empresa->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-		<?php } else { // Add/edit record ?>
-		<div class="form-group libro_empresa">
-			<label class="col-sm-2 control-label ewLabel"><?php echo $libro->empresa->FldCaption() ?></label>
-			<div class="col-sm-10"><div<?php echo $libro->empresa->CellAttributes() ?>>
-<span id="el<?php echo $libro_list->RowCnt ?>_libro_empresa">
-<span<?php echo $libro->empresa->ViewAttributes() ?>>
-<?php echo $libro->empresa->ListViewValue() ?></span>
 </span>
 </div></div>
 		</div>
@@ -2149,8 +2090,8 @@ if ($libro_list->Recordset)
 <div class="ewPager">
 <input type="hidden" name="t" value="libro">
 <select name="<?php echo EW_TABLE_REC_PER_PAGE ?>" class="form-control input-sm" onchange="this.form.submit();">
+<option value="10"<?php if ($libro_list->DisplayRecs == 10) { ?> selected<?php } ?>>10</option>
 <option value="20"<?php if ($libro_list->DisplayRecs == 20) { ?> selected<?php } ?>>20</option>
-<option value="ALL"<?php if ($libro->getRecordsPerPage() == -1) { ?> selected<?php } ?>><?php echo $Language->Phrase("AllRecords") ?></option>
 </select>
 </div>
 <?php } ?>

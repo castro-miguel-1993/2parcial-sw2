@@ -479,8 +479,8 @@ class cpedido_list extends cpedido {
 		global $objForm, $Language, $gsFormError, $gsSearchError, $Security;
 
 		// Multi Column
-		$this->RecPerRow = 6;
-		$this->MultiColumnCnt = 2;
+		$this->RecPerRow = 1;
+		$this->MultiColumnCnt = 12;
 		$this->MultiColumnEditCnt = 12;
 
 		// Search filters
@@ -680,7 +680,6 @@ class cpedido_list extends cpedido {
 		$sFilterList = ew_Concat($sFilterList, $this->empleado->AdvancedSearch->ToJSON(), ","); // Field empleado
 		$sFilterList = ew_Concat($sFilterList, $this->fecha->AdvancedSearch->ToJSON(), ","); // Field fecha
 		$sFilterList = ew_Concat($sFilterList, $this->cliente->AdvancedSearch->ToJSON(), ","); // Field cliente
-		$sFilterList = ew_Concat($sFilterList, $this->empresa->AdvancedSearch->ToJSON(), ","); // Field empresa
 		if ($this->BasicSearch->Keyword <> "") {
 			$sWrk = "\"" . EW_TABLE_BASIC_SEARCH . "\":\"" . ew_JsEncode2($this->BasicSearch->Keyword) . "\",\"" . EW_TABLE_BASIC_SEARCH_TYPE . "\":\"" . ew_JsEncode2($this->BasicSearch->Type) . "\"";
 			$sFilterList = ew_Concat($sFilterList, $sWrk, ",");
@@ -730,14 +729,6 @@ class cpedido_list extends cpedido {
 		$this->cliente->AdvancedSearch->SearchValue2 = @$filter["y_cliente"];
 		$this->cliente->AdvancedSearch->SearchOperator2 = @$filter["w_cliente"];
 		$this->cliente->AdvancedSearch->Save();
-
-		// Field empresa
-		$this->empresa->AdvancedSearch->SearchValue = @$filter["x_empresa"];
-		$this->empresa->AdvancedSearch->SearchOperator = @$filter["z_empresa"];
-		$this->empresa->AdvancedSearch->SearchCondition = @$filter["v_empresa"];
-		$this->empresa->AdvancedSearch->SearchValue2 = @$filter["y_empresa"];
-		$this->empresa->AdvancedSearch->SearchOperator2 = @$filter["w_empresa"];
-		$this->empresa->AdvancedSearch->Save();
 		$this->BasicSearch->setKeyword(@$filter[EW_TABLE_BASIC_SEARCH]);
 		$this->BasicSearch->setType(@$filter[EW_TABLE_BASIC_SEARCH_TYPE]);
 	}
@@ -906,15 +897,17 @@ class cpedido_list extends cpedido {
 	// Set up sort parameters
 	function SetUpSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->id); // id
-			$this->UpdateSort($this->empleado); // empleado
-			$this->UpdateSort($this->fecha); // fecha
-			$this->UpdateSort($this->cliente); // cliente
-			$this->UpdateSort($this->empresa); // empresa
+			$this->UpdateSort($this->id, $bCtrl); // id
+			$this->UpdateSort($this->empleado, $bCtrl); // empleado
+			$this->UpdateSort($this->fecha, $bCtrl); // fecha
+			$this->UpdateSort($this->cliente, $bCtrl); // cliente
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -951,7 +944,6 @@ class cpedido_list extends cpedido {
 				$this->empleado->setSort("");
 				$this->fecha->setSort("");
 				$this->cliente->setSort("");
-				$this->empresa->setSort("");
 			}
 
 			// Reset start position
@@ -988,12 +980,6 @@ class cpedido_list extends cpedido {
 		$item->Visible = TRUE;
 		$item->OnLeft = FALSE;
 
-		// "delete"
-		$item = &$this->ListOptions->Add("delete");
-		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
-		$item->OnLeft = FALSE;
-
 		// List actions
 		$item = &$this->ListOptions->Add("listactions");
 		$item->CssStyle = "white-space: nowrap;";
@@ -1004,7 +990,7 @@ class cpedido_list extends cpedido {
 
 		// "checkbox"
 		$item = &$this->ListOptions->Add("checkbox");
-		$item->Visible = FALSE;
+		$item->Visible = TRUE;
 		$item->OnLeft = FALSE;
 		$item->Header = "<input type=\"checkbox\" name=\"key\" id=\"key\" onclick=\"ew_SelectAllKey(this);\">";
 		$item->ShowInDropDown = FALSE;
@@ -1053,13 +1039,6 @@ class cpedido_list extends cpedido {
 		} else {
 			$oListOpt->Body = "";
 		}
-
-		// "delete"
-		$oListOpt = &$this->ListOptions->Items["delete"];
-		if (TRUE)
-			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
-		else
-			$oListOpt->Body = "";
 
 		// Set up list action buttons
 		$oListOpt = &$this->ListOptions->GetItem("listactions");
@@ -1110,6 +1089,11 @@ class cpedido_list extends cpedido {
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . ew_HtmlTitle($Language->Phrase("AddLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("AddLink")) . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
 		$item->Visible = ($this->AddUrl <> "");
 		$option = $options["action"];
+
+		// Add multi delete
+		$item = &$option->Add("multidelete");
+		$item->Body = "<a class=\"ewAction ewMultiDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" href=\"\" onclick=\"ew_SubmitAction(event,{f:document.fpedidolist,url:'" . $this->MultiDeleteUrl . "'});return false;\">" . $Language->Phrase("DeleteSelectedLink") . "</a>";
+		$item->Visible = (TRUE);
 
 		// Set up options default
 		foreach ($options as &$option) {
@@ -1433,7 +1417,6 @@ class cpedido_list extends cpedido {
 		$this->empleado->setDbValue($rs->fields('empleado'));
 		$this->fecha->setDbValue($rs->fields('fecha'));
 		$this->cliente->setDbValue($rs->fields('cliente'));
-		$this->empresa->setDbValue($rs->fields('empresa'));
 	}
 
 	// Load DbValue from recordset
@@ -1444,7 +1427,6 @@ class cpedido_list extends cpedido {
 		$this->empleado->DbValue = $row['empleado'];
 		$this->fecha->DbValue = $row['fecha'];
 		$this->cliente->DbValue = $row['cliente'];
-		$this->empresa->DbValue = $row['empresa'];
 	}
 
 	// Load old record
@@ -1490,7 +1472,6 @@ class cpedido_list extends cpedido {
 		// empleado
 		// fecha
 		// cliente
-		// empresa
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1511,10 +1492,6 @@ class cpedido_list extends cpedido {
 		$this->cliente->ViewValue = $this->cliente->CurrentValue;
 		$this->cliente->ViewCustomAttributes = "";
 
-		// empresa
-		$this->empresa->ViewValue = $this->empresa->CurrentValue;
-		$this->empresa->ViewCustomAttributes = "";
-
 			// id
 			$this->id->LinkCustomAttributes = "";
 			$this->id->HrefValue = "";
@@ -1534,11 +1511,6 @@ class cpedido_list extends cpedido {
 			$this->cliente->LinkCustomAttributes = "";
 			$this->cliente->HrefValue = "";
 			$this->cliente->TooltipValue = "";
-
-			// empresa
-			$this->empresa->LinkCustomAttributes = "";
-			$this->empresa->HrefValue = "";
-			$this->empresa->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1864,7 +1836,7 @@ while ($pedido_list->RecCnt < $pedido_list->StopRec) {
 <?php if ($pedido->Export <> "" || $pedido->SortUrl($pedido->id) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $pedido->id->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $pedido->SortUrl($pedido->id) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $pedido->SortUrl($pedido->id) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $pedido->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($pedido->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($pedido->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1895,7 +1867,7 @@ while ($pedido_list->RecCnt < $pedido_list->StopRec) {
 <?php if ($pedido->Export <> "" || $pedido->SortUrl($pedido->empleado) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $pedido->empleado->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $pedido->SortUrl($pedido->empleado) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $pedido->SortUrl($pedido->empleado) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $pedido->empleado->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($pedido->empleado->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($pedido->empleado->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1926,7 +1898,7 @@ while ($pedido_list->RecCnt < $pedido_list->StopRec) {
 <?php if ($pedido->Export <> "" || $pedido->SortUrl($pedido->fecha) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $pedido->fecha->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $pedido->SortUrl($pedido->fecha) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $pedido->SortUrl($pedido->fecha) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $pedido->fecha->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($pedido->fecha->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($pedido->fecha->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1957,7 +1929,7 @@ while ($pedido_list->RecCnt < $pedido_list->StopRec) {
 <?php if ($pedido->Export <> "" || $pedido->SortUrl($pedido->cliente) == "") { ?>
 				<div class="ewTableHeaderCaption"><?php echo $pedido->cliente->FldCaption() ?></div>
 <?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $pedido->SortUrl($pedido->cliente) ?>',1);">
+				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $pedido->SortUrl($pedido->cliente) ?>',2);">
             	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $pedido->cliente->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($pedido->cliente->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($pedido->cliente->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 				</div>
 <?php } ?>
@@ -1976,37 +1948,6 @@ while ($pedido_list->RecCnt < $pedido_list->StopRec) {
 <span id="el<?php echo $pedido_list->RowCnt ?>_pedido_cliente">
 <span<?php echo $pedido->cliente->ViewAttributes() ?>>
 <?php echo $pedido->cliente->ListViewValue() ?></span>
-</span>
-</div></div>
-		</div>
-		<?php } ?>
-	<?php } ?>
-	<?php if ($pedido->empresa->Visible) { // empresa ?>
-		<?php if ($pedido->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-		<tr>
-			<td class="ewTableHeader"><span class="pedido_empresa">
-<?php if ($pedido->Export <> "" || $pedido->SortUrl($pedido->empresa) == "") { ?>
-				<div class="ewTableHeaderCaption"><?php echo $pedido->empresa->FldCaption() ?></div>
-<?php } else { ?>
-				<div class="ewPointer" onclick="ew_Sort(event,'<?php echo $pedido->SortUrl($pedido->empresa) ?>',1);">
-            	<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $pedido->empresa->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($pedido->empresa->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($pedido->empresa->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-				</div>
-<?php } ?>
-			</span></td>
-			<td<?php echo $pedido->empresa->CellAttributes() ?>>
-<span id="el<?php echo $pedido_list->RowCnt ?>_pedido_empresa">
-<span<?php echo $pedido->empresa->ViewAttributes() ?>>
-<?php echo $pedido->empresa->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-		<?php } else { // Add/edit record ?>
-		<div class="form-group pedido_empresa">
-			<label class="col-sm-2 control-label ewLabel"><?php echo $pedido->empresa->FldCaption() ?></label>
-			<div class="col-sm-10"><div<?php echo $pedido->empresa->CellAttributes() ?>>
-<span id="el<?php echo $pedido_list->RowCnt ?>_pedido_empresa">
-<span<?php echo $pedido->empresa->ViewAttributes() ?>>
-<?php echo $pedido->empresa->ListViewValue() ?></span>
 </span>
 </div></div>
 		</div>
@@ -2095,8 +2036,8 @@ if ($pedido_list->Recordset)
 <div class="ewPager">
 <input type="hidden" name="t" value="pedido">
 <select name="<?php echo EW_TABLE_REC_PER_PAGE ?>" class="form-control input-sm" onchange="this.form.submit();">
+<option value="10"<?php if ($pedido_list->DisplayRecs == 10) { ?> selected<?php } ?>>10</option>
 <option value="20"<?php if ($pedido_list->DisplayRecs == 20) { ?> selected<?php } ?>>20</option>
-<option value="ALL"<?php if ($pedido->getRecordsPerPage() == -1) { ?> selected<?php } ?>><?php echo $Language->Phrase("AllRecords") ?></option>
 </select>
 </div>
 <?php } ?>

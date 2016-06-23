@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<configuration date="2016/06/22" author="e.World Technology Ltd.">
-<project id="{2604CCF7-311F-415E-9E95-9937AECA0470}" file="" name="project1" product="PHPMaker" version="12.0" datetime="2016/06/22 22:58:36" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;">
+<configuration date="2016/06/23" author="e.World Technology Ltd.">
+<project id="{2604CCF7-311F-415E-9E95-9937AECA0470}" file="" name="project1" product="PHPMaker" version="12.0" datetime="2016/06/23 09:10:26" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;">
 <table id="cliente" name="cliente" caption="cliente" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1"/>
 <table id="detalle" name="detalle" caption="detalle" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1"/>
 <table id="devolucion" name="devolucion" caption="devolucion" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1"/>
-<table id="empresa" name="empresa" caption="empresa" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1"/>
 <table id="libro" name="libro" caption="libro" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1"/>
 <table id="pedido" name="pedido" caption="pedido" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1"/>
 <table id="usuario" name="usuario" caption="usuario" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1"/>
 <table id="administrador" name="administrador" caption="administrador" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1"/>
+<table id="inicio" name="inicio" caption="inicio" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1"/>
 </project></configuration>
